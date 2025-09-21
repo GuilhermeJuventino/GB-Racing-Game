@@ -1,5 +1,5 @@
 VERSION := 0
-GAMEID := BOIL
+GAMEID := GBRG
 TITLE := BOILERPLATE
 LICENSEE := HB
 OLDLIC := 0x33
@@ -12,5 +12,5 @@ SRAMSIZE := 0x00
 # LDFLAGS += -w
 # LDFLAGS += -t
 PADVALUE := 0xFF
-ROMNAME := boilerplate
+ROMNAME := GB-Racing-Game
 ROMEXT  := gb
