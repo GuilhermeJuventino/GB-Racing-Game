@@ -1,0 +1,16 @@
+VERSION := 0
+GAMEID := BOIL
+TITLE := BOILERPLATE
+LICENSEE := HB
+OLDLIC := 0x33
+MBC := MBC5
+SRAMSIZE := 0x00
+# FIXFLAGS += -c
+# FIXFLAGS += -C
+# FIXFLAGS += -s
+# LDFLAGS += -d
+# LDFLAGS += -w
+# LDFLAGS += -t
+PADVALUE := 0xFF
+ROMNAME := boilerplate
+ROMEXT  := gb
