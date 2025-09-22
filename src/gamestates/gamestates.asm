@@ -20,6 +20,9 @@ GameStateManager::
     cp a, 0
     jp z, .titleScreenState
 
+    cp a, 1
+    jp z, .gameplayState
+    
     ret
 
 
@@ -27,8 +30,15 @@ GameStateManager::
     call InitTitleScreen
     call UpdateTitleScreen
 
-    ret
+    jp GameStateManager
+
+
+.gameplayState:
+    call InitGameplay
+    call UpdateGameplay
+
+    jp GameStateManager
 
 
 SECTION "GameStateVariables", WRAM0
-wCurrentGameState: db
+wCurrentGameState:: db

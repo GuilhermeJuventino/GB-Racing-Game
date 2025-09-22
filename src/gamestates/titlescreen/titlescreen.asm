@@ -28,6 +28,17 @@ UpdateTitleScreen::
     jp nc, UpdateTitleScreen
 
     call WaitVBlank
+    
+    ; Check if start button was pressed
+    ldh a, [hPressedKeys]
+    and PAD_START
+    jp z, .exitTitleScreenEnd
+
+    .exitTitleScreen:
+        ld a, 1
+        ld [wCurrentGameState], a
+        ret
+    .exitTitleScreenEnd:
 
     jp UpdateTitleScreen
 
