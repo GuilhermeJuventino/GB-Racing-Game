@@ -55,12 +55,10 @@ Reset:: ; This is where the VBlank handler jumps to if Start+Select+B+A are all 
     jr nz, .copyOAMDMA
 
     WARN "Edit to set palettes here"
-    ld a, %10010011
-    rrc a
-    rrc a
-    rrc a
-    rrc a
-    ld [rBGP], a
+    ld a, %11100100
+    ld [hBGP], a
+    ld a, %11100100
+    ld [hOBP0], a
 
     ; CGB palettes maybe, DMG ones always
 
