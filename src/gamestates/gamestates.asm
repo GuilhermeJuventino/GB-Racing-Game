@@ -12,10 +12,6 @@ InitGameStateMachine::
 GameStateManager::
     call WaitVBlank
 
-    ; Turning off LCD
-    xor a
-    ld [rLCDC], a
-
     ld a, [wCurrentGameState]
     cp a, 0
     jp z, .titleScreenState

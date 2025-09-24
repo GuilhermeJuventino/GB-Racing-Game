@@ -93,7 +93,7 @@ Reset:: ; This is where the VBlank handler jumps to if Start+Select+B+A are all 
     ; xor a
     ldh [hSCY], a
     ldh [hSCX], a
-    ld a, LCDC_ENABLE | LCDC_BG_ON
+    ld a, LCDC_ENABLE | LCDC_BG_ON | LCDC_OBJ_ON | LCDC_OBJ_16
     ldh [hLCDC], a
     ; And turn the LCD on!
     ldh [rLCDC], a

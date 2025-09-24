@@ -8,17 +8,17 @@ InitGameplay::
     ld de, RaceTrackTiles
     ld hl, $9000
     ld bc, RaceTrackTilesEnd - RaceTrackTiles
-    call Memcpy
+    call LCDMemcpy
 
     ld de, RaceTrackMap
     ld hl, $9800
     ld bc, RaceTrackMapEnd - RaceTrackMap
-    call Memcpy
+    call LCDMemcpy
 
     ld de, PlayerSprite
     ld hl, $8000
     ld bc, PlayerSpriteEnd - PlayerSprite
-    call Memcpy
+    call LCDMemcpy
 
 
     ; Loading sprite to Shadow OAM
@@ -31,11 +31,6 @@ InitGameplay::
     ld a, 0 ; Object attributes
     ld [hli], a
     ld [hli], a
-
-
-    ; Turning LCD on
-    ld a, LCDC_ENABLE | LCDC_BG_ON | LCDC_OBJ_ON | LCDC_OBJ_16
-    ld [rLCDC], a
 
     ret
 
