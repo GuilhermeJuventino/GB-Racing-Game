@@ -31,9 +31,21 @@ clean:
 .PHONY: clean
 
 VPATH := src
-assets/%.2bpp assets/%.tilemap: assets/%.png
+assets/titlescreen/backgrounds/%.2bpp assets/titlescreen/backgrounds/%.tilemap: assets/titlescreen/backgrounds/%.png
 	@mkdir -p "${@D}"
 	${RGBGFX} --unique-tiles --output $@ -O -T $<
+
+assets/gameplay/backgrounds/%.2bpp assets/gameplay/backgrounds/%.tilemap: assets/gameplay/backgrounds/%.png
+	@mkdir -p "${@D}"
+	${RGBGFX} --unique-tiles --output $@ -O -T $<
+
+assets/titlescreen/sprites/%.2bpp: assets/titlescreen/sprites/%.png	
+	@mkdir -p "${@D}"
+	${RGBGFX} --columns --output $@ -O $<
+
+assets/gameplay/sprites/%.2bpp: assets/gameplay/sprites/%.png	
+	@mkdir -p "${@D}"
+	${RGBGFX} --columns --output $@ -O $<
 
 assets/%.1bpp: assets/%.png
 	@mkdir -p "${@D}"
