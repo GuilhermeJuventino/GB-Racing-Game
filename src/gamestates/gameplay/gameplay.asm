@@ -1,5 +1,4 @@
 INCLUDE "defines.inc"
-;INCLUDE "player.asm"
 
 SECTION "Gameplay", ROM0
 
@@ -15,23 +14,6 @@ InitGameplay::
     ld hl, $9800
     ld bc, RaceTrackMapEnd - RaceTrackMap
     call LCDMemcpy
-
-    ld de, PlayerSprite
-    ld hl, $8000
-    ld bc, PlayerSpriteEnd - PlayerSprite
-    call LCDMemcpy
-
-
-    ; Loading sprite to Shadow OAM
-    ld hl, wShadowOAM
-
-    ld a, 128 + 16 ; Object Y position
-    ld [hli], a
-    ld a, 16 + 46 ; Object X position
-    ld [hli], a
-    ld a, 0 ; Object attributes
-    ld [hli], a
-    ld [hli], a
 
     call InitPlayer
 
@@ -60,5 +42,3 @@ RaceTrackTilesEnd:
 RaceTrackMap: INCBIN "assets/gameplay/backgrounds/background.tilemap"
 RaceTrackMapEnd:
 
-PlayerSprite: INCBIN "assets/gameplay/sprites/player.2bpp"
-PlayerSpriteEnd:
