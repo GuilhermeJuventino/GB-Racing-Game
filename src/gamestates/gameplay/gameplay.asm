@@ -1,4 +1,5 @@
 INCLUDE "defines.inc"
+;INCLUDE "player.asm"
 
 SECTION "Gameplay", ROM0
 
@@ -31,6 +32,8 @@ InitGameplay::
     ld a, 0 ; Object attributes
     ld [hli], a
     ld [hli], a
+
+    call InitPlayer
 
     ret
 
