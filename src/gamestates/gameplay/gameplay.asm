@@ -24,8 +24,12 @@ UpdateGameplay::
     ld a, [rLY]
     cp 144
     jp nc, UpdateGameplay
-
+    
     call WaitVBlank
+
+    call ClearShadowOAM
+
+    call UpdatePlayer
 
     ; Start OAM DMA transfer
     ld a, HIGH(wShadowOAM)

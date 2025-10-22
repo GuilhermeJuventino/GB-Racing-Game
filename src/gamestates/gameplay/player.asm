@@ -33,12 +33,10 @@ InitPlayer::
     ld [hl], a
 
     ; Loading sprite to Shadow OAM
-    ld hl, wShadowOAM
-    call LoadPlayerSprite
 
     ret
 
-LoadPlayerSprite: 
+SetPlayerSprite: 
     ; Left Metasprite
     ld de, wPlayer_y
     ld a, [de]
@@ -71,6 +69,48 @@ LoadPlayerSprite:
 
     ld a, 0
     ld [hli], a
+
+    ret
+
+; Must be called every frame
+UpdatePlayer::
+    call MovePlayer
+
+    ld hl, wShadowOAM
+    call SetPlayerSprite
+
+    ret
+
+
+MovePlayer:
+    call CheckPlayerInput
+
+    ret
+
+
+CheckPlayerInput:
+    ; Checking player input
+.checkKeyLeft
+    ld a, [hHeldKeys]
+    and a, PAD_LEFT
+    jp z, .checkKeyRight
+
+.moveLeft
+    ld a, [wPlayer_x]
+    dec a
+    ld [wPlayer_x], a
+
+    ret
+
+.checkKeyRight
+    ld a, [hHeldKeys]
+    and a, PAD_RIGHT
+    ret z
+
+.moveRight
+    ld a, [wPlayer_x]
+    inc a
+    ld [wPlayer_x], a
 
     ret
 
