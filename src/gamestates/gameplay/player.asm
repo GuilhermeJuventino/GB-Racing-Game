@@ -120,6 +120,7 @@ CheckPlayerInput:
 CheckPlayerTileCollision:
     ; Checking left boundary tile
     ld a, [wPlayer_x]
+    sub 8 ; negative 8 px offset
     ld b, a
     ld a, [wPlayer_y]
     ld c, a
@@ -139,7 +140,7 @@ CheckPlayerTileCollision:
 
     ; Checking right boundary tile
     ld a, [wPlayer_x]
-    add 16
+    add 7 ; positive 7 px offset
     ld b, a
     ld a, [wPlayer_y]
     ld c, a
