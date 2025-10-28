@@ -15,7 +15,7 @@ ClearShadowOAM::
     ret
 
 ; Convert a pixel position to a tile address
-; hl = $9800 + X + Y  * 32
+; hl = Tilemap (WRAM copy) + X + Y  * 32
 ; param b: X
 ; param c: Y
 ; return hl: tile address
@@ -42,7 +42,7 @@ GetTileByPixel::
     sub a, l
     ld h, a
     ; Add the offset to the tilemap's base address, and then we're done.
-    ld bc, $9800
+    ld bc, wRaceTrackMap
     add hl, bc
 
     ret

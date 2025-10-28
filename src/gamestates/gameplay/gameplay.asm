@@ -15,6 +15,11 @@ InitGameplay::
     ld bc, RaceTrackMapEnd - RaceTrackMap
     call LCDMemcpy
 
+    ld de, RaceTrackMap
+    ld hl, wRaceTrackMap
+    ld bc, RaceTrackMapEnd - RaceTrackMap
+    call Memcpy
+
     call InitPlayer
 
     ret
@@ -36,6 +41,12 @@ UpdateGameplay::
     ldh [hOAMHigh], a
 
     jp UpdateGameplay
+
+
+SECTION "Gameplay Variables", WRAM0
+
+; WRAM copy of the Racing Track Tile Map for collision detection
+wRaceTrackMap:: db
 
 
 SECTION "Racing Track Graphics", ROM0

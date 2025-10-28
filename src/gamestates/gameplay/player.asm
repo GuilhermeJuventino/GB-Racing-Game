@@ -84,6 +84,7 @@ UpdatePlayer::
 
 MovePlayer:
     call CheckPlayerInput
+    call CheckPlayerTileCollision
 
     ret
 
@@ -111,6 +112,48 @@ CheckPlayerInput:
     ld a, [wPlayer_x]
     inc a
     ld [wPlayer_x], a
+
+    ret
+
+
+; Checks if player is colliding with the left or right boundary tiles of the racing track
+CheckPlayerTileCollision:
+    ; Checking left boundary tile
+    ld a, [wPlayer_x]
+    ld b, a
+    ld a, [wPlayer_y]
+    ld c, a
+    call GetTileByPixel
+
+    ld a, [hl]
+    cp a, $04
+    jp nz, .collideWithLeftBoundaryEnd
+
+    .collideWithLeftBoundary
+        ld a, [wPlayer_x]
+        inc a
+        ld [wPlayer_x], a
+
+        ret
+    .collideWithLeftBoundaryEnd
+
+    ; Checking right boundary tile
+    ld a, [wPlayer_x]
+    add 16
+    ld b, a
+    ld a, [wPlayer_y]
+    ld c, a
+    call GetTileByPixel
+
+    ld a, [hl]
+    cp a, $08
+    jp nz, .collideWithRightBoundaryEnd
+
+    .collideWithRightBoundary
+        ld a, [wPlayer_x]
+        dec a
+        ld [wPlayer_x], a
+    .collideWithRightBoundaryEnd
 
     ret
 
