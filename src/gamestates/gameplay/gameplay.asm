@@ -19,6 +19,11 @@ InitGameplay::
     ld hl, wRaceTrackMap
     ld bc, RaceTrackMapEnd - RaceTrackMap
     call Memcpy
+    
+    ; Reset Background Scroll position
+    xor a
+    ld [hSCX], a
+    ld [hSCY], a
 
     call InitPlayer
 
@@ -33,6 +38,11 @@ UpdateGameplay::
     call WaitVBlank
 
     call ClearShadowOAM
+    
+    ; Scrolling the Background vertically
+    ld a, [hSCY]
+    sub 2
+    ld [hSCY], a
 
     call UpdatePlayer
 

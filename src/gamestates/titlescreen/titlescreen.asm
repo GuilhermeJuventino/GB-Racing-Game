@@ -15,6 +15,11 @@ InitTitleScreen::
     ld bc, TitleScreenMapEnd - TitleScreenMap
     call LCDMemcpy
 
+    ; Reset Background Scroll position
+    xor a
+    ld [hSCX], a
+    ld [hSCY], a
+
     ret
 
 
