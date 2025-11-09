@@ -46,6 +46,7 @@ UpdateTitleScreen::
 
 SECTION "Title Screen Graphics", ROM0
 
+
 TitleScreenTiles: INCBIN "assets/titlescreen/backgrounds/background.2bpp"
 TitleScreenTilesEnd:
 

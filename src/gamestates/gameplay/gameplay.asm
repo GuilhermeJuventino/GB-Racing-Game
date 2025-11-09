@@ -26,6 +26,7 @@ InitGameplay::
     ld [hSCY], a
 
     call InitPlayer
+    call InitEnemy
 
     ret
 
@@ -45,6 +46,7 @@ UpdateGameplay::
     ld [hSCY], a
 
     call UpdatePlayer
+    call UpdateEnemies
 
     ; Start OAM DMA transfer
     ld a, HIGH(wShadowOAM)
@@ -55,11 +57,13 @@ UpdateGameplay::
 
 SECTION "Gameplay Variables", WRAM0
 
+
 ; WRAM copy of the Racing Track Tile Map for collision detection
 wRaceTrackMap:: db
 
 
 SECTION "Racing Track Graphics", ROM0
+
 
 RaceTrackTiles: INCBIN "assets/gameplay/backgrounds/background.2bpp"
 RaceTrackTilesEnd:

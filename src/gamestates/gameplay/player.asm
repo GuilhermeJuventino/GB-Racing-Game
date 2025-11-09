@@ -10,6 +10,7 @@ end_struct
 
 SECTION "Player", ROM0
 
+
 InitPlayer::
     ld de, PlayerSprite
     ld hl, $8000
@@ -35,6 +36,7 @@ InitPlayer::
     ; Loading sprite to Shadow OAM
 
     ret
+
 
 SetPlayerSprite: 
     ; Left Metasprite
@@ -71,6 +73,7 @@ SetPlayerSprite:
     ld [hli], a
 
     ret
+
 
 ; Must be called every frame
 UpdatePlayer::
@@ -161,9 +164,12 @@ CheckPlayerTileCollision:
 
 SECTION "PlayerAssets", ROM0
 
+
 PlayerSprite: INCBIN "assets/gameplay/sprites/player.2bpp"
 PlayerSpriteEnd:
 
 
 SECTION "PlayerVariables", WRAM0
+
+
 dstruct Player, wPlayer

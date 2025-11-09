@@ -37,4 +37,6 @@ GameStateManager::
 
 
 SECTION "GameStateVariables", WRAM0
+
+
 wCurrentGameState:: db
