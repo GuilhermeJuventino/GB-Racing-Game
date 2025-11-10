@@ -26,7 +26,7 @@ InitGameplay::
     ld [hSCY], a
 
     call InitPlayer
-    call InitEnemy
+    call InitEnemies
 
     ret
 
