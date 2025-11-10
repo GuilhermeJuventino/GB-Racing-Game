@@ -12,6 +12,7 @@ end_struct
 SECTION "Enemy", ROM0
 
 
+; Initializes graphics and variables related to enemies
 InitEnemies::
     ld de, EnemySprite
     ld hl, $8040
@@ -22,13 +23,13 @@ InitEnemies::
     ld [wXPos], a
 
     xor a
-    ld [wEnemyIndex], a
+    ld [wEnemyIndex], a ; Index for loop
  
     ld de, wEnemies0
 
     .initLoop:
         call InitEnemy
-
+        
         ld a, [wEnemyIndex]
         inc a
         ld [wEnemyIndex], a
@@ -36,16 +37,12 @@ InitEnemies::
         jp c, .initLoop
     .initLoopEnd:
 
-    ld a, 85
-    ld [wXPos], a
-
-    xor a
-    ld [wEnemyIndex], a
-
     ret
 
 
-; de - index pointer of enemy array
+; Initialize entry in wEnemies array
+; param de: Index pointer of enemy array
+; retunr de: Pointer to the next entry in the array
 InitEnemy:
     ld h, d
     ld l, e
@@ -69,13 +66,12 @@ InitEnemy:
     ld [hli], a
     
     ; wEnemies[i] active
-    ld a, 0
+    xor a
     ld [hli], a
     
-    ld h, d
-    ld l, e
-
-    ld de, sizeof_Enemy
+    
+    ; Incrementing wEnemies pointer stored in DE to point to the next entry in the array
+    ld hl, sizeof_Enemy
     add hl, de
 
     ld d, h
@@ -84,18 +80,18 @@ InitEnemy:
     ret
 
 
+; Loads enemy sprites into Shadow OAM
+; param hl: pointer to Shadow OAM area designated to enemies
 SetEnemySprite: 
     ld de, wEnemies0
     xor a
-    ld [wEnemyIndex], a
+    ld [wEnemyIndex], a ; Index for loop
 
     .setSpriteLoop:
         ; Left Metasprite
         push hl
         ld h, d
         ld l, e
-        ld bc, Enemy_y
-        add hl, bc
 
         ld a, [hl]
         pop hl
@@ -104,8 +100,9 @@ SetEnemySprite:
         push hl
         ld h, d
         ld l, e
-        ld bc, Enemy_x
-        add hl, bc
+
+        ; X Pos Offset
+        inc hl
 
         ld a, [hl]
         pop hl
@@ -114,32 +111,33 @@ SetEnemySprite:
         push hl
         ld h, d
         ld l, e
-        ld bc, Enemy_metaspriteLeft
-        add hl, bc
+
+        ; Left Metasprite Offset
+        inc hl
+        inc hl
 
         ld a, [hl]
         pop hl
         ld [hli], a ; Enemy Left Metasprite
 
-        ld a, 0
+        xor a
         ld [hli], a ; Enemy Sprite Attributes
 
         ; Right Metasprite
         push hl
         ld h, d
         ld l, e
-        ld bc, Enemy_y
-        add hl, bc
 
         ld a, [hl]
         pop hl
-        ld [hli], a ; Enemy Y pos
+        ld [hli], a ; Enemy Y Pos
         
         push hl
         ld h, d
         ld l, e
-        ld bc, Enemy_x
-        add hl, bc
+        
+        ; X Pos Offset
+        inc hl
 
         ld a, [hl]
         add a, 8
@@ -149,23 +147,28 @@ SetEnemySprite:
         push hl
         ld h, d
         ld l, e
-        ld bc, Enemy_metaspriteRight
-        add hl, bc
+
+        ; Right Metasrptie Offset
+        inc hl
+        inc hl
+        inc hl
 
         ld a, [hl]
         pop hl
         ld [hli], a ; Enemy Right Metasprite
 
-        ld a, 0
+        xor a
         ld [hli], a ; Enemy Sprite Attributes
         
+        ; Incrementing wEnemies pointer stored in DE to point to the next entry in the array
         push hl
         ld hl, sizeof_Enemy
         add hl, de
         ld d, h
         ld e, l
         pop hl
-
+        
+        ; Incrementing Loop Index
         ld a, [wEnemyIndex]
         inc a
         ld [wEnemyIndex], a
@@ -177,6 +180,7 @@ SetEnemySprite:
     ret
 
 
+; Update enemy sprites in the Shadow OAM
 UpdateEnemies::
     ld hl, wShadowOAM + 8
     call SetEnemySprite
