@@ -24,14 +24,12 @@ InitEnemies::
     xor a
     ld [wEnemyIndex], a
  
+    ld de, wEnemies0
+
     .initLoop:
-        ld de, wEnemies0
-        ld a, 0
-        ld [hl], a
         call InitEnemy
 
         ld a, [wEnemyIndex]
-        inc de
         inc a
         ld [wEnemyIndex], a
         cp 4
@@ -49,7 +47,8 @@ InitEnemies::
 
 ; de - index pointer of enemy array
 InitEnemy:
-    add hl, de
+    ld h, d
+    ld l, e
     
     ; wEnemies[i] Y pos
     ld a, 135
@@ -72,6 +71,15 @@ InitEnemy:
     ; wEnemies[i] active
     ld a, 0
     ld [hli], a
+    
+    ld h, d
+    ld l, e
+
+    ld de, sizeof_Enemy
+    add hl, de
+
+    ld d, h
+    ld e, l
 
     ret
 
@@ -83,45 +91,80 @@ SetEnemySprite:
 
     .setSpriteLoop:
         ; Left Metasprite
-        ld a, [de]
+        push hl
+        ld h, d
+        ld l, e
+        ld bc, Enemy_y
+        add hl, bc
+
+        ld a, [hl]
+        pop hl
         ld [hli], a ; Enemy Y pos
-        inc de
+        
+        push hl
+        ld h, d
+        ld l, e
+        ld bc, Enemy_x
+        add hl, bc
 
-        ld a, [de]
+        ld a, [hl]
+        pop hl
         ld [hli], a ; Enemy X pos
-        inc de
+        
+        push hl
+        ld h, d
+        ld l, e
+        ld bc, Enemy_metaspriteLeft
+        add hl, bc
 
-        ld a, 4
+        ld a, [hl]
+        pop hl
         ld [hli], a ; Enemy Left Metasprite
 
         ld a, 0
         ld [hli], a ; Enemy Sprite Attributes
 
-        ; Decrementing DE twice, so that we can reuse the current index's x and y coordinates for next metasprite
-        dec de
-        dec de
-
         ; Right Metasprite
-        ld a, [de]
-        ld [hli], a ; Enemy Y pos
-        inc de
+        push hl
+        ld h, d
+        ld l, e
+        ld bc, Enemy_y
+        add hl, bc
 
-        ld a, [de]
+        ld a, [hl]
+        pop hl
+        ld [hli], a ; Enemy Y pos
+        
+        push hl
+        ld h, d
+        ld l, e
+        ld bc, Enemy_x
+        add hl, bc
+
+        ld a, [hl]
         add a, 8
+        pop hl
         ld [hli], a ; Enemy X pos
 
-        ; Incrementing DE twice, so that we can now use the right metasprite
-        inc de
-        inc de
+        push hl
+        ld h, d
+        ld l, e
+        ld bc, Enemy_metaspriteRight
+        add hl, bc
 
-        ld a, 6
+        ld a, [hl]
+        pop hl
         ld [hli], a ; Enemy Right Metasprite
 
         ld a, 0
         ld [hli], a ; Enemy Sprite Attributes
         
-        inc de
-        inc de
+        push hl
+        ld hl, sizeof_Enemy
+        add hl, de
+        ld d, h
+        ld e, l
+        pop hl
 
         ld a, [wEnemyIndex]
         inc a
