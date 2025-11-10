@@ -180,7 +180,8 @@ SetEnemySprite:
     ret
 
 
-; Update enemy sprites in the Shadow OAM
+; Update enemies' position and graphics
+; Must be called every frame
 UpdateEnemies::
     ld hl, wShadowOAM + 8
     call SetEnemySprite

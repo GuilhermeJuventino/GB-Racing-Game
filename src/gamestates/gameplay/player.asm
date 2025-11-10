@@ -11,6 +11,7 @@ end_struct
 SECTION "Player", ROM0
 
 
+; Initializes graphics and variables related to the player
 InitPlayer::
     ld de, PlayerSprite
     ld hl, $8000
@@ -33,11 +34,11 @@ InitPlayer::
     ld a, 2
     ld [hl], a
 
-    ; Loading sprite to Shadow OAM
-
     ret
 
 
+; Loads player sprites into Shadow OAM
+; param hl: Pointer to Shadow OAM area designated to the player
 SetPlayerSprite: 
     ; Left Metasprite
     ld de, wPlayer_y
@@ -53,7 +54,7 @@ SetPlayerSprite:
     ld [hli], a
 
     ld a, 0
-    ld [hli], a
+    ld [hli], a ; Player Sprite Attributes
 
     ; Right Metasprite
     ld de, wPlayer_y
@@ -70,11 +71,12 @@ SetPlayerSprite:
     ld [hli], a
 
     ld a, 0
-    ld [hli], a
+    ld [hli], a ; Player Sprite Attributes
 
     ret
 
 
+; Updates the player's position and graphics
 ; Must be called every frame
 UpdatePlayer::
     call MovePlayer
@@ -92,6 +94,7 @@ MovePlayer:
     ret
 
 
+; Checks controller input and moves the player accordingly
 CheckPlayerInput:
     ; Checking player input
 .checkKeyLeft
