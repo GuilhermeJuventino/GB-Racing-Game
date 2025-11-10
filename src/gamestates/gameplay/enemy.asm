@@ -26,9 +26,7 @@ InitEnemies::
  
     .initLoop:
         ld de, wEnemies0
-        ;inc de
         ld a, 0
-        ;ld hl, wEnemyIndex
         ld [hl], a
         call InitEnemy
 
@@ -80,8 +78,7 @@ InitEnemy:
 
 SetEnemySprite: 
     ld de, wEnemies0
-
-    ld a, 0
+    xor a
     ld [wEnemyIndex], a
 
     .setSpriteLoop:
@@ -94,7 +91,7 @@ SetEnemySprite:
         ld [hli], a ; Enemy X pos
         inc de
 
-        ld a, [de]
+        ld a, 4
         ld [hli], a ; Enemy Left Metasprite
 
         ld a, 0
@@ -117,7 +114,7 @@ SetEnemySprite:
         inc de
         inc de
 
-        ld a, [de]
+        ld a, 6
         ld [hli], a ; Enemy Right Metasprite
 
         ld a, 0
@@ -130,7 +127,7 @@ SetEnemySprite:
         inc a
         ld [wEnemyIndex], a
         
-        cp 3
+        cp 4
         jp c, .setSpriteLoop
     .setSpriteLoopEnd:
 
