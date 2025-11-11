@@ -89,15 +89,20 @@ SetEnemySprite:
 
     .setSpriteLoop:
         ; Left Metasprite
-        push hl
+        ld b, h
+        ld c, l
+
         ld h, d
         ld l, e
 
         ld a, [hl]
-        pop hl
+        ld h, b
+        ld l, c
         ld [hli], a ; Enemy Y pos
         
-        push hl
+        ld b, h
+        ld c, l
+
         ld h, d
         ld l, e
 
@@ -105,10 +110,13 @@ SetEnemySprite:
         inc hl
 
         ld a, [hl]
-        pop hl
+        ld h, b
+        ld l, c
         ld [hli], a ; Enemy X pos
         
-        push hl
+        ld b, h
+        ld c, l
+
         ld h, d
         ld l, e
 
@@ -117,22 +125,28 @@ SetEnemySprite:
         inc hl
 
         ld a, [hl]
-        pop hl
+        ld h, b
+        ld l, c
         ld [hli], a ; Enemy Left Metasprite
 
         xor a
         ld [hli], a ; Enemy Sprite Attributes
 
         ; Right Metasprite
-        push hl
+        ld b, h
+        ld c, l
+
         ld h, d
         ld l, e
 
         ld a, [hl]
-        pop hl
+        ld h, b
+        ld l, c
         ld [hli], a ; Enemy Y Pos
         
-        push hl
+        ld b, h
+        ld c, l
+
         ld h, d
         ld l, e
         
@@ -141,10 +155,13 @@ SetEnemySprite:
 
         ld a, [hl]
         add a, 8
-        pop hl
+        ld h, b
+        ld l, c
         ld [hli], a ; Enemy X pos
+        
+        ld b, h
+        ld c, l
 
-        push hl
         ld h, d
         ld l, e
 
@@ -154,19 +171,23 @@ SetEnemySprite:
         inc hl
 
         ld a, [hl]
-        pop hl
+        ld h, b
+        ld l, c
         ld [hli], a ; Enemy Right Metasprite
 
         xor a
         ld [hli], a ; Enemy Sprite Attributes
         
         ; Incrementing wEnemies pointer stored in DE to point to the next entry in the array
-        push hl
+        ld b, h
+        ld c, l
         ld hl, sizeof_Enemy
         add hl, de
         ld d, h
         ld e, l
-        pop hl
+
+        ld h, b
+        ld l, c
         
         ; Incrementing Loop Index
         ld a, [wEnemyIndex]
