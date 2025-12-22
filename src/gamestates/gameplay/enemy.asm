@@ -19,8 +19,8 @@ InitEnemies::
     ld bc, EnemySpriteEnd - EnemySprite
     call LCDMemcpy
     
-    ld a, 85
-    ld [wXPos], a
+    ;ld a, 85
+    ;ld [wXPos], a
 
     xor a
     ld [wEnemyIndex], a ; Index for loop
@@ -36,25 +36,30 @@ InitEnemies::
         cp 4
         jp c, .initLoop
     .initLoopEnd:
+    
+    ld a, [wEnemies0]
+    ld [wEnemyToSpawn], a
+
+    call SetSpawnTimer
 
     ret
 
 
 ; Initialize entry in wEnemies array
 ; param de: Index pointer of enemy array
-; retunr de: Pointer to the next entry in the array
+; return de: Pointer to the next entry in the array
 InitEnemy:
     ld h, d
     ld l, e
     
     ; wEnemies[i] Y pos
-    ld a, 135
+    xor a
     ld [hli], a
 
     ; wEnemies[i] X pos
-    ld a, [wXPos]
+    ;ld a, 0
     ld [hli], a
-    add a, 20
+    ;add a, 20
     ld [wXPos], a
      
     ; wEnemies[i] metaspriteLeft
@@ -197,13 +202,170 @@ SetEnemySprite:
         cp 4
         jp c, .setSpriteLoop
     .setSpriteLoopEnd:
+    
+    xor a
+    ld [wEnemyIndex], a
 
     ret
+
+
+RollEnemyPosition:
+    def MIN_X equ $38
+    def MAX_X equ $70
+
+    def RANGE_X equ MAX_X - MIN_X
+    def MODULO_X equ $38
+
+.roll
+    call rand
+    and MODULO_X
+    cp RANGE_X :: jr nc, .roll
+    add MIN_X
+    
+    ld [wXPos], a
+
+    call SetSpawnTimer
+
+    ret
+
+
+SetSpawnTimer:
+    def MIN_DELAY equ 8
+    def MAX_DELAY equ 16
+
+    def RANGE_DELAY equ MAX_DELAY - MIN_DELAY
+    def MODULO_DELAY equ 8
+
+.roll
+    call rand
+    and MODULO_DELAY - 1
+    cp RANGE_DELAY :: jr nc, .roll
+    add MIN_DELAY
+
+    ld [wSpawnDelay], a
+
+    ret
+
+
+EnemySpawner:
+    ld hl, wEnemyToSpawn ; A pointer to wEnemies0 specific for this function
+    inc hl
+    inc hl
+    inc hl
+    inc hl
+    inc hl
+
+    ld a, [hl] ; wEnemies[i].active
+
+    cp a, 0
+    ret nz
+
+    ld a, [wSpawnDelay]
+    cp a, 1 ; Checking if spawn delay is greater than zero
+    ret nc
+
+    ld hl, wEnemyToSpawn
+    
+    ; Randomizing wEnemies[i].x position
+    call RollEnemyPosition
+    inc hl
+    ld [hl], a
+    
+    ; Setting wEnemies[i].active to 1
+    ld a, 1
+    inc hl
+    inc hl
+    inc hl
+    inc hl
+    ld [hl], a
+    
+    ; Setting new spawn timer
+    call SetSpawnTimer
+    
+    ; Incrementing wEnemyToSpawn pointer
+    ld d, h
+    ld e, l
+
+    ld hl, sizeof_Enemy
+    add hl, de
+
+    ld a, [hl]
+    ld [wEnemyToSpawn], a
+
+ret
+
+
+MoveEnemies:
+    ld hl, wEnemies0
+    xor a
+    ld [wEnemyIndex], a ; Loop index
+
+.loop
+    ld d, h
+    ld e, l
+    ld bc, sizeof_Enemy
+
+    inc de
+    inc de
+    inc de
+    inc de
+    inc de
+
+    ld a, [de]
+    cp 0
+    jp nz, .skipIndexEnd ; Checking if wEnemies0[i].active is not zero
+
+.skipIndex:
+    ; Moving to next entry in wEneies
+    ld d, h
+    ld e, l
+
+    ld h, b
+    ld l, c
+
+    add hl, de
+    ld a, [wEnemyIndex]
+    inc a
+    ld [wEnemyIndex], a
+
+    jp .loop
+.skipIndexEnd:
+
+    ld a, [hl]
+    inc a
+    ld [hl], a ; Incrementing wEnemies[i].y position
+
+    dec hl
+
+    ; Moving to next entry in wEnemies
+    ld d, h
+    ld e, l
+
+    ld h, b
+    ld l, c
+
+    add hl, de
+
+    ld a, [wEnemyIndex]
+    inc a
+    ld [wEnemyIndex], a
+
+    cp 4
+    jp c, .loop 
+
+ret
 
 
 ; Update enemies' position and graphics
 ; Must be called every frame
 UpdateEnemies::
+    ld a, [wSpawnDelay]
+    dec a
+    ld [wSpawnDelay], a
+    
+    call MoveEnemies
+    call EnemySpawner
+
     ld hl, wShadowOAM + 8
     call SetEnemySprite
 
@@ -220,5 +382,7 @@ EnemySpriteEnd:
 SECTION "EnemyVariables", WRAM0
 
 wXPos: db
+wSpawnDelay: db
+wEnemyToSpawn: db
 wEnemyIndex: db
 dstructs 4, Enemy, wEnemies
