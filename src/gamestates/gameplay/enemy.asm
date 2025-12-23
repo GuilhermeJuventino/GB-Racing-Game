@@ -258,7 +258,23 @@ EnemySpawner:
     ld a, [hl] ; wEnemies[i].active
 
     cp a, 0
-    ret nz
+    jp z, .skipIndexEnd
+
+.skipIndex 
+    ld hl, wEnemyToSpawn
+
+    ; Incrementing wEnemyToSpawn pointer
+    ld d, h
+    ld e, l
+
+    ld hl, sizeof_Enemy
+    add hl, de
+
+    ;ld a, [hl]
+    ;ld [wEnemyToSpawn], a
+
+    ret
+.skipIndexEnd
 
     ld a, [wSpawnDelay]
     cp a, 1 ; Checking if spawn delay is greater than zero
@@ -289,8 +305,8 @@ EnemySpawner:
     ld hl, sizeof_Enemy
     add hl, de
 
-    ld a, [hl]
-    ld [wEnemyToSpawn], a
+    ;ld a, [hl]
+    ;ld [wEnemyToSpawn], a
 
 ret
 
@@ -334,8 +350,6 @@ MoveEnemies:
     ld a, [hl]
     inc a
     ld [hl], a ; Incrementing wEnemies[i].y position
-
-    dec hl
 
     ; Moving to next entry in wEnemies
     ld d, h
