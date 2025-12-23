@@ -214,17 +214,17 @@ RollEnemyPosition:
     def MAX_X equ $70
 
     def RANGE_X equ MAX_X - MIN_X
-    def MODULO_X equ $38
+    def MODULO_X equ $1C
 
 .roll
     call rand
-    and MODULO_X
+    and MODULO_X - 1
     cp RANGE_X :: jr nc, .roll
     add MIN_X
     
     ld [wXPos], a
 
-    call SetSpawnTimer
+    ;call SetSpawnTimer
 
     ret
 
@@ -284,6 +284,7 @@ EnemySpawner:
     
     ; Randomizing wEnemies[i].x position
     call RollEnemyPosition
+    ld a, [wXPos]
     inc hl
     ld [hl], a
     
