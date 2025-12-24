@@ -265,7 +265,7 @@ EnemySpawner:
     
     ld a, [hl]
     cp a, 1
-    jp nc, .skipIndexEnd
+    jp nz, .skipIndexEnd
 
 .skipIndex
     dec hl
@@ -330,8 +330,8 @@ MoveEnemies:
     inc de
 
     ld a, [de]
-    cp 1
-    jp nc, .skipIndexEnd ; Checking if wEnemies0[i].active is not zero
+    cp 0
+    jp nz, .skipIndexEnd ; Checking if wEnemies0[i].active is not zero
 
 .skipIndex:
     ; Moving to next entry in wEneies
@@ -350,6 +350,46 @@ MoveEnemies:
 .skipIndexEnd:
 
     ld a, [hl]
+    cp $B2
+    jp c, .resetPositionEnd
+
+.resetPosition
+    xor a
+    ld [hl], a
+    
+    inc hl
+    inc hl
+    inc hl
+    inc hl
+    inc hl
+
+    ld [hl], a
+
+    dec hl
+    dec hl
+    dec hl
+    dec hl
+    dec hl
+
+    ld d, h
+    ld e, l
+
+    ld h, b
+    ld l, c
+
+    add hl, de
+
+    ld a, [wEnemyIndex]
+    inc a
+    ld [wEnemyIndex], a
+
+    cp 4
+    jp c, .loop
+
+    ret
+
+.resetPositionEnd
+
     inc a
     ld [hl], a ; Incrementing wEnemies[i].y position
 
