@@ -248,67 +248,68 @@ SetSpawnTimer:
 
 
 EnemySpawner:
-    ld hl, wEnemyToSpawn ; A pointer to wEnemies0 specific for this function
-    inc hl
-    inc hl
-    inc hl
-    inc hl
-    inc hl
-
-    ld a, [hl] ; wEnemies[i].active
-
-    cp a, 0
-    jp z, .skipIndexEnd
-
-.skipIndex 
-    ld hl, wEnemyToSpawn
-
-    ; Incrementing wEnemyToSpawn pointer
-    ld d, h
-    ld e, l
-
-    ld hl, sizeof_Enemy
-    add hl, de
-
-    ;ld a, [hl]
-    ;ld [wEnemyToSpawn], a
-
-    ret
-.skipIndexEnd
-
     ld a, [wSpawnDelay]
-    cp a, 1 ; Checking if spawn delay is greater than zero
+    cp a, 1
     ret nc
 
-    ld hl, wEnemyToSpawn
+    ld hl, wEnemies0
+    xor a
+    ld [wEnemyIndex], a
     
-    ; Randomizing wEnemies[i].x position
-    call RollEnemyPosition
-    ld a, [wXPos]
+.loop
     inc hl
-    ld [hl], a
+    inc hl
+    inc hl
+    inc hl
+    inc hl
     
-    ; Setting wEnemies[i].active to 1
-    ld a, 1
-    inc hl
-    inc hl
-    inc hl
-    inc hl
-    ld [hl], a
-    
-    ; Setting new spawn timer
-    call SetSpawnTimer
-    
-    ; Incrementing wEnemyToSpawn pointer
+    ld a, [hl]
+    cp a, 1
+    jp nc, .skipIndexEnd
+
+.skipIndex
+    dec hl
+    dec hl
+    dec hl
+    dec hl
+    dec hl
     ld d, h
     ld e, l
 
+    ;ld de, wEnemies0
     ld hl, sizeof_Enemy
     add hl, de
 
-    ;ld a, [hl]
-    ;ld [wEnemyToSpawn], a
+    ld a, [wEnemyIndex]
+    inc a
+    ld [wEnemyIndex], a
 
+    cp 4
+    jp c, .loop
+
+    ret
+
+.skipIndexEnd
+    ld a, 1
+    ld [hl], a
+
+    dec hl
+    dec hl
+    dec hl
+    dec hl
+    dec hl
+
+    push hl
+
+    call RollEnemyPosition
+    
+    pop hl
+
+    inc hl
+    ld a, [wXPos]
+    ld [hl], a
+    call SetSpawnTimer
+    ;dec hl
 ret
 
 
@@ -329,8 +330,8 @@ MoveEnemies:
     inc de
 
     ld a, [de]
-    cp 0
-    jp nz, .skipIndexEnd ; Checking if wEnemies0[i].active is not zero
+    cp 1
+    jp nc, .skipIndexEnd ; Checking if wEnemies0[i].active is not zero
 
 .skipIndex:
     ; Moving to next entry in wEneies
