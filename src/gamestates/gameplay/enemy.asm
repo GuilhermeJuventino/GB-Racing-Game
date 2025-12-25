@@ -38,7 +38,6 @@ InitEnemies::
     .initLoopEnd:
     
     ld a, [wEnemies0]
-    ld [wEnemyToSpawn], a
 
     call SetSpawnTimer
 
@@ -216,15 +215,13 @@ RollEnemyPosition:
     def RANGE_X equ MAX_X - MIN_X
     def MODULO_X equ $1C
 
-.roll
+.roll:
     call rand
     and MODULO_X - 1
     cp RANGE_X :: jr nc, .roll
     add MIN_X
     
     ld [wXPos], a
-
-    ;call SetSpawnTimer
 
     ret
 
@@ -236,7 +233,7 @@ SetSpawnTimer:
     def RANGE_DELAY equ MAX_DELAY - MIN_DELAY
     def MODULO_DELAY equ 8
 
-.roll
+.roll:
     call rand
     and MODULO_DELAY - 1
     cp RANGE_DELAY :: jr nc, .roll
@@ -256,7 +253,7 @@ EnemySpawner:
     xor a
     ld [wEnemyIndex], a
     
-.loop
+.loop:
     inc hl
     inc hl
     inc hl
@@ -267,16 +264,16 @@ EnemySpawner:
     cp a, 1
     jp nz, .skipIndexEnd
 
-.skipIndex
+.skipIndex:
     dec hl
     dec hl
     dec hl
     dec hl
     dec hl
+
     ld d, h
     ld e, l
 
-    ;ld de, wEnemies0
     ld hl, sizeof_Enemy
     add hl, de
 
@@ -289,7 +286,7 @@ EnemySpawner:
 
     ret
 
-.skipIndexEnd
+.skipIndexEnd:
     ld a, 1
     ld [hl], a
 
@@ -309,7 +306,7 @@ EnemySpawner:
     ld a, [wXPos]
     ld [hl], a
     call SetSpawnTimer
-    ;dec hl
+    
 ret
 
 
@@ -318,7 +315,7 @@ MoveEnemies:
     xor a
     ld [wEnemyIndex], a ; Loop index
 
-.loop
+.loop:
     ld d, h
     ld e, l
     ld bc, sizeof_Enemy
@@ -345,15 +342,18 @@ MoveEnemies:
     ld a, [wEnemyIndex]
     inc a
     ld [wEnemyIndex], a
+    
+    cp 4
+    jp c, .loop
 
-    jp .loop
+    ret
+
 .skipIndexEnd:
-
     ld a, [hl]
     cp $B2
     jp c, .resetPositionEnd
 
-.resetPosition
+.resetPosition:
     xor a
     ld [hl], a
     
@@ -362,7 +362,7 @@ MoveEnemies:
     inc hl
     inc hl
     inc hl
-
+    
     ld [hl], a
 
     dec hl
@@ -388,8 +388,7 @@ MoveEnemies:
 
     ret
 
-.resetPositionEnd
-
+.resetPositionEnd:
     inc a
     ld [hl], a ; Incrementing wEnemies[i].y position
 
@@ -439,6 +438,5 @@ SECTION "EnemyVariables", WRAM0
 
 wXPos: db
 wSpawnDelay: db
-wEnemyToSpawn: db
 wEnemyIndex: db
 dstructs 4, Enemy, wEnemies
