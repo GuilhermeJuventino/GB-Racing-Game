@@ -18,9 +18,6 @@ InitEnemies::
     ld hl, $8040
     ld bc, EnemySpriteEnd - EnemySprite
     call LCDMemcpy
-    
-    ;ld a, 85
-    ;ld [wXPos], a
 
     xor a
     ld [wEnemyIndex], a ; Index for loop
@@ -56,9 +53,7 @@ InitEnemy:
     ld [hli], a
 
     ; wEnemies[i] X pos
-    ;ld a, 0
     ld [hli], a
-    ;add a, 20
     ld [wXPos], a
      
     ; wEnemies[i] metaspriteLeft
@@ -244,32 +239,31 @@ SetSpawnTimer:
     ret
 
 
+; Loops trough the wEnemies array until it finds a non active enemy
+; And spawns said enemy with a randomized X position if the spawn timer has reached zero
 EnemySpawner:
     ld a, [wSpawnDelay]
     cp a, 1
-    ret nc
+    ret nc ; Checking the spawn delay timer has reached zero, and skipping the function if it's greater than zero
 
     ld hl, wEnemies0
     xor a
     ld [wEnemyIndex], a
     
 .loop:
-    inc hl
-    inc hl
-    inc hl
-    inc hl
-    inc hl
+    ld de, 4
+    add hl, de ; wEnemies[i]. active
     
     ld a, [hl]
     cp a, 1
-    jp nz, .skipIndexEnd
+    jp nz, .skipIndexEnd ; Checking if current enemy is not active
 
 .skipIndex:
+    ; Moving to next entry in wEnemies
     dec hl
     dec hl
     dec hl
-    dec hl
-    dec hl
+    dec hl ; Back to wEnemies[i].active
 
     ld d, h
     ld e, l
@@ -293,9 +287,9 @@ EnemySpawner:
     dec hl
     dec hl
     dec hl
-    dec hl
-    dec hl
+    dec hl ; Back to wEnemies[i].active
 
+    ; Randomizing current Eenmy's X Position and moving on to the next entry
     push hl
 
     call RollEnemyPosition
@@ -310,28 +304,29 @@ EnemySpawner:
 ret
 
 
+; Loops through the wEnemies array and updates their Y coordinates accordingly
 MoveEnemies:
     ld hl, wEnemies0
     xor a
     ld [wEnemyIndex], a ; Loop index
 
 .loop:
-    ld d, h
-    ld e, l
     ld bc, sizeof_Enemy
 
-    inc de
-    inc de
-    inc de
-    inc de
-    inc de
+    ld de, 4
+    add hl, de ; wEnemies[i].active
 
-    ld a, [de]
+    ld a, [hl]
     cp 0
     jp nz, .skipIndexEnd ; Checking if wEnemies0[i].active is not zero
 
 .skipIndex:
     ; Moving to next entry in wEneies
+    dec hl
+    dec hl
+    dec hl
+    dec hl ; Back to wEnemies[i].active
+
     ld d, h
     ld e, l
 
@@ -349,9 +344,14 @@ MoveEnemies:
     ret
 
 .skipIndexEnd:
+    dec hl
+    dec hl
+    dec hl
+    dec hl ; Back to wEnemies[i].active
+
     ld a, [hl]
     cp $B2
-    jp c, .resetPositionEnd
+    jp c, .resetPositionEnd ; Check if current Enemy's Y position is beneath the screen limit
 
 .resetPosition:
     xor a
@@ -360,17 +360,16 @@ MoveEnemies:
     inc hl
     inc hl
     inc hl
-    inc hl
-    inc hl
+    inc hl ; wEnemies[i].active
     
     ld [hl], a
 
     dec hl
     dec hl
     dec hl
-    dec hl
-    dec hl
-
+    dec hl ; Back to wEnemies[i].y
+    
+    ; Moving to next entry in wEnemies
     ld d, h
     ld e, l
 
