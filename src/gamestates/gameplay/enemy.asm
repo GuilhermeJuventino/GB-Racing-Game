@@ -208,7 +208,7 @@ RollEnemyPosition:
     def MAX_X equ $70
 
     def RANGE_X equ MAX_X - MIN_X
-    def MODULO_X equ $1C
+    def MODULO_X equ $38
 
 .roll:
     call rand
