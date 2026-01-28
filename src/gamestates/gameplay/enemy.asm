@@ -222,11 +222,11 @@ RollEnemyPosition:
 
 
 SetSpawnTimer:
-    def MIN_DELAY equ 8
-    def MAX_DELAY equ 16
+    def MIN_DELAY equ 32
+    def MAX_DELAY equ 120
 
     def RANGE_DELAY equ MAX_DELAY - MIN_DELAY
-    def MODULO_DELAY equ 8
+    def MODULO_DELAY equ 88
 
 .roll:
     call rand
@@ -325,7 +325,7 @@ MoveEnemies:
     dec hl
     dec hl
     dec hl
-    dec hl ; Back to wEnemies[i].active
+    dec hl ; Back to wEnemies[i].y
 
     ld d, h
     ld e, l
@@ -347,10 +347,10 @@ MoveEnemies:
     dec hl
     dec hl
     dec hl
-    dec hl ; Back to wEnemies[i].active
+    dec hl ; Back to wEnemies[i].y
 
     ld a, [hl]
-    cp $B2
+    cp $A2
     jp c, .resetPositionEnd ; Check if current Enemy's Y position is beneath the screen limit
 
 .resetPosition:
