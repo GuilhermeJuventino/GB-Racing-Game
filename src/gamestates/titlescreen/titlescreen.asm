@@ -30,6 +30,8 @@ UpdateTitleScreen::
 
     call WaitVBlank
     
+    call ClearShadowOAM
+
     ; Check if start button was pressed
     ldh a, [hPressedKeys]
     and PAD_START
@@ -40,6 +42,10 @@ UpdateTitleScreen::
         ld [wCurrentGameState], a
         ret
     .exitTitleScreenEnd:
+
+    ; Start OAM DMA transfer
+    ld a, HIGH(wShadowOAM)
+    ldh [hOAMHigh], a
 
     jp UpdateTitleScreen
 

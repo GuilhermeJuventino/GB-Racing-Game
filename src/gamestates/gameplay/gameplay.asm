@@ -39,6 +39,17 @@ UpdateGameplay::
     call WaitVBlank
 
     call ClearShadowOAM
+
+    ; Check if start button was pressed
+    ldh a, [hPressedKeys]
+    and PAD_START
+    jp z, .exitTitleScreenEnd
+
+    .exitTitleScreen:
+        ld a, 0
+        ld [wCurrentGameState], a
+        ret
+    .exitTitleScreenEnd:
     
     ; Scrolling the Background vertically
     ld a, [hSCY]
