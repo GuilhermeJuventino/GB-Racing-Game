@@ -437,5 +437,8 @@ SECTION "EnemyVariables", WRAM0
 
 wXPos: db
 wSpawnDelay: db
-wEnemyIndex: db
+wEnemyIndex:: db
+
+def STRUCTS_EXPORT_CONSTANTS equ 1
+
 dstructs 4, Enemy, wEnemies

@@ -24,6 +24,9 @@ InitGameplay::
     xor a
     ld [hSCX], a
     ld [hSCY], a
+    
+    ; Initializing state flag variables
+    ld [wShouldExitGameplayState], a
 
     call InitPlayer
     call InitEnemies
@@ -41,9 +44,13 @@ UpdateGameplay::
     call ClearShadowOAM
 
     ; Check if start button was pressed
-    ldh a, [hPressedKeys]
-    and PAD_START
-    jp z, .exitTitleScreenEnd
+    ;ldh a, [hPressedKeys]
+    ;and PAD_START
+    ;jp z, .exitTitleScreenEnd
+
+    ld a, [wShouldExitGameplayState]
+    cp 1
+    jp nz, .exitTitleScreenEnd
 
     .exitTitleScreen:
         ld a, 0
@@ -71,6 +78,9 @@ SECTION "Gameplay Variables", WRAM0
 
 ; WRAM copy of the Racing Track Tile Map for collision detection
 wRaceTrackMap:: db
+
+; Variable to track whether or not the game should exit the gameplay state
+wShouldExitGameplayState:: db
 
 
 SECTION "Racing Track Graphics", ROM0

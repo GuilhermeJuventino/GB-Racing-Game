@@ -90,6 +90,7 @@ UpdatePlayer::
 MovePlayer:
     call CheckPlayerInput
     call CheckPlayerTileCollision
+    call CheckPlayerSpriteCollision
 
     ret
 
@@ -161,6 +162,128 @@ CheckPlayerTileCollision:
         dec a
         ld [wPlayer_x], a
     .collideWithRightBoundaryEnd
+
+    ret
+
+
+; Loops trough the enemy sprites array, and check if the player has
+; collided with any of the enemies
+CheckPlayerSpriteCollision:
+    xor a
+    ld [wEnemyIndex], a
+
+    ld de, wEnemies0
+
+.loop
+    call CheckPlayerVsEnemyCollision
+
+    ld a, 0
+    cp a, c
+    jp nz, .collisionFound
+    
+
+    ld hl, sizeof_wEnemies0
+    add hl, de
+    ld d, h
+    ld e, l
+
+    ld a, [wEnemyIndex]
+    inc a
+    ld [wEnemyIndex], a
+
+    cp 4
+    jp c, .loop
+
+    jp .collisionFoundEnd
+
+.collisionFound
+    call KillPlayer
+
+    ret
+
+.collisionFoundEnd
+
+    ret
+
+
+; Checks if player sprite has collided with an enemy sprite
+; param de: Pointer to enemy struct
+; return c: 0 if no collision, 1 if collision is detected
+CheckPlayerVsEnemyCollision:
+    def WIDTH equ 16
+    def HEIGHT equ 16
+
+    ; CASE 1: player.x < enemy.x + width
+    inc de ; Enemy.x
+
+    ld a, [de]
+    ld b, a
+    ld a, [WIDTH]
+    add a, b
+
+    ld b, a
+    ld a, [wPlayer_x]
+    
+    cp a, b
+    jp nc, .noCollision
+
+    ; CASE 2: player.x + width > enemy.x
+    ld a, [de]
+    ld b, a
+    ld a, [wPlayer_x]
+
+    ld c, a
+    ld a, [WIDTH]
+    add a, c
+
+    cp a, b
+    jp c, .noCollision
+
+    ; CASE 3: player.y < enemy.y + height
+    dec de; Enemy.y
+
+    ld a, [de]
+    ld b, a
+    ld a, [HEIGHT]
+    add a, b
+
+    ld b, a
+    ld a, [wPlayer_y]
+    
+    cp a, b
+    jp nc, .noCollision
+ 
+    ; CASE 4: player.y + height > enemy.y
+    ld a, [de]
+    ld b, a
+    ld a, [wPlayer_y]
+
+    ld c, a
+    ld a, [HEIGHT]
+    add a, c
+
+    cp a, b
+    jp c, .noCollision
+
+    ; Collision Found
+    jp .noCollisionEnd
+
+.noCollision
+    xor a
+    ld c, a
+
+    ret
+
+.noCollisionEnd
+    ld a, 1
+    ld c, a
+
+    ret
+
+
+KillPlayer:    
+    ld a, 1
+    ld [wShouldExitGameplayState], a
 
     ret
 
