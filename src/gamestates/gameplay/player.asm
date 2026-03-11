@@ -210,16 +210,14 @@ CheckPlayerSpriteCollision:
 ; param de: Pointer to enemy struct
 ; return c: 0 if no collision, 1 if collision is detected
 CheckPlayerVsEnemyCollision:
-    def WIDTH equ 18
-    def HEIGHT equ 18
+    def WIDTH equ 16
+    def HEIGHT equ 16
 
     ; CASE 1: player.x < enemy.x + width
     inc de ; Enemy.x
 
     ld a, [de]
-    ld b, a
-    ld a, [WIDTH]
-    add a, b
+    add a, WIDTH
 
     ld b, a
     ld a, [wPlayer_x]
@@ -232,9 +230,7 @@ CheckPlayerVsEnemyCollision:
     ld b, a
     ld a, [wPlayer_x]
 
-    ld c, a
-    ld a, [WIDTH]
-    add a, c
+    add a, WIDTH
 
     cp a, b
     jp c, .noCollision
@@ -243,9 +239,7 @@ CheckPlayerVsEnemyCollision:
     dec de; Enemy.y
 
     ld a, [de]
-    ld b, a
-    ld a, [HEIGHT]
-    add a, b
+    add a, HEIGHT
 
     ld b, a
     ld a, [wPlayer_y]
@@ -258,9 +252,7 @@ CheckPlayerVsEnemyCollision:
     ld b, a
     ld a, [wPlayer_y]
 
-    ld c, a
-    ld a, [HEIGHT]
-    add a, c
+    add a, HEIGHT
 
     cp a, b
     jp c, .noCollision
