@@ -6,6 +6,13 @@ SECTION "Game State Machine", ROM0
 InitGameStateMachine::
     ld a, 0
     ld [wCurrentGameState], a
+    
+    ; Copying game font into VRAM
+    ld de, FontTiles
+    ld hl, $8800
+    ld bc, FontTilesEnd - FontTiles
+    call LCDMemcpy
+
     ret
 
 

@@ -43,11 +43,6 @@ UpdateGameplay::
 
     call ClearShadowOAM
 
-    ; Check if start button was pressed
-    ;ldh a, [hPressedKeys]
-    ;and PAD_START
-    ;jp z, .exitTitleScreenEnd
-
     ld a, [wShouldExitGameplayState]
     cp 1
     jp nz, .exitTitleScreenEnd

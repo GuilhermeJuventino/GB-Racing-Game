@@ -39,6 +39,10 @@ assets/gameplay/backgrounds/%.2bpp assets/gameplay/backgrounds/%.tilemap: assets
 	@mkdir -p "${@D}"
 	${RGBGFX} --unique-tiles --output $@ -O -T $<
 
+assets/HUD/Font/%.2bpp: assets/HUD/Font/%.png
+	@mkdir -p "${@D}"
+	${RGBGFX} --unique-tiles --output $@ $<
+
 assets/titlescreen/sprites/%.2bpp: assets/titlescreen/sprites/%.png	
 	@mkdir -p "${@D}"
 	${RGBGFX} --columns --output $@ -O $<
