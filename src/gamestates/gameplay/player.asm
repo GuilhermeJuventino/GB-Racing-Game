@@ -217,7 +217,7 @@ CheckPlayerVsEnemyCollision:
     inc de ; Enemy.x
 
     ld a, [de]
-    add a, WIDTH
+    add a, 16
 
     ld b, a
     ld a, [wPlayer_x]
@@ -230,7 +230,7 @@ CheckPlayerVsEnemyCollision:
     ld b, a
     ld a, [wPlayer_x]
 
-    add a, WIDTH
+    add a, 16
 
     cp a, b
     jp c, .noCollision
@@ -239,7 +239,7 @@ CheckPlayerVsEnemyCollision:
     dec de; Enemy.y
 
     ld a, [de]
-    add a, HEIGHT
+    add a, 16
 
     ld b, a
     ld a, [wPlayer_y]
@@ -252,7 +252,7 @@ CheckPlayerVsEnemyCollision:
     ld b, a
     ld a, [wPlayer_y]
 
-    add a, HEIGHT
+    add a, 16
 
     cp a, b
     jp c, .noCollision
