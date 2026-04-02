@@ -4,6 +4,11 @@ SECTION "Gameplay", ROM0
 
 
 InitGameplay::
+    ; Turning LCD and OBJ Layer off to load gameplay assets
+    ld a, LCDC_OFF | LCDC_BG_OFF | LCDC_OBJ_OFF
+    ldh [hLCDC], a
+    ldh [rLCDC], a
+
     ; Copying Title Screen data to VRAM
     ld de, RaceTrackTiles
     ld hl, $9000
@@ -24,6 +29,11 @@ InitGameplay::
     xor a
     ld [hSCX], a
     ld [hSCY], a
+    
+    ; Turning LCD and OBJ Layer back on
+    ld a, LCDC_ON | LCDC_BG_ON | LCDC_OBJ_ON | LCDC_OBJ_16
+    ldh [hLCDC], a
+    ldh [rLCDC], a
     
     ; Initializing state flag variables
     ld [wShouldExitGameplayState], a

@@ -4,6 +4,11 @@ SECTION "Title Screen", ROM0
 
 
 InitTitleScreen::
+    ; Turning LCD and OBJ Layer off to load title screen assets
+    ld a, LCDC_OFF | LCDC_BG_OFF | LCDC_OBJ_OFF
+    ldh [hLCDC], a
+    ldh [rLCDC], a
+
     ; Copying Title Screen data to VRAM
     ld de, TitleScreenTiles
     ld hl, $9000
@@ -19,6 +24,11 @@ InitTitleScreen::
     xor a
     ld [hSCX], a
     ld [hSCY], a
+    
+    ; Turning LCD back on
+    ld a, LCDC_ON | LCDC_BG_ON | LCDC_OBJ_ON
+    ldh [hLCDC], a
+    ldh [rLCDC], a
 
     ret
 
