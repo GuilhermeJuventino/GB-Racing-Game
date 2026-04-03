@@ -217,29 +217,29 @@ CheckPlayerVsEnemyCollision:
     inc de ; Enemy.x
 
     ld a, [de]
-    add a, 16
+    add a, WIDTH
 
     ld b, a
     ld a, [wPlayer_x]
     
     cp a, b
-    jp nc, .noCollision
+    jp nc, .noCollisionAdjustDE
 
     ; CASE 2: player.x + width > enemy.x
     ld a, [de]
     ld b, a
     ld a, [wPlayer_x]
 
-    add a, 16
+    add a, WIDTH
 
     cp a, b
-    jp c, .noCollision
+    jp c, .noCollisionAdjustDE
 
     ; CASE 3: player.y < enemy.y + height
-    dec de; Enemy.y
+    dec de ; Decrementing back to start of pointer, A.K.A. Enemy.y
 
     ld a, [de]
-    add a, 16
+    add a, HEIGHT
 
     ld b, a
     ld a, [wPlayer_y]
@@ -252,13 +252,16 @@ CheckPlayerVsEnemyCollision:
     ld b, a
     ld a, [wPlayer_y]
 
-    add a, 16
+    add a, HEIGHT
 
     cp a, b
     jp c, .noCollision
 
     ; Collision Found
     jp .noCollisionEnd
+
+.noCollisionAdjustDE 
+    dec de ; Decrementing back to start of pointer, A.K.A. Enemy.y
 
 .noCollision
     xor a
