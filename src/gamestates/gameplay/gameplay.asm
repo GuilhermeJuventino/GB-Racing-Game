@@ -4,8 +4,8 @@ SECTION "Gameplay", ROM0
 
 
 InitGameplay::
-    ; Turning LCD and OBJ Layer off to load gameplay assets
-    ld a, LCDC_OFF | LCDC_BG_OFF | LCDC_OBJ_OFF
+    ; Turning LCD, Window and OBJ Layer off to load gameplay assets
+    ld a, LCDC_OFF | LCDC_BG_OFF | LCDC_WIN_OFF | LCDC_OBJ_OFF
     ldh [hLCDC], a
     ldh [rLCDC], a
 
@@ -25,13 +25,25 @@ InitGameplay::
     ld bc, RaceTrackMapEnd - RaceTrackMap
     call Memcpy
     
+    ; Filling the entire Window Layer Tilemap with blank tiles
+    ld a, $80
+    ld hl, $9C00
+    ld bc, $9FFF - $9C00
+    call LCDMemset
+    
     ; Reset Background Scroll position
     xor a
     ld [hSCX], a
     ld [hSCY], a
     
-    ; Turning LCD and OBJ Layer back on
-    ld a, LCDC_ON | LCDC_BG_ON | LCDC_OBJ_ON | LCDC_OBJ_16
+    ; Setting Window layer's position
+    ld [rWX], a
+
+    ld a, 136
+    ld [rWY], a
+    
+    ; Turning LCD, Window and OBJ Layer back on
+    ld a, LCDC_ON | LCDC_BG_ON | LCDC_WIN_ON | LCDC_WIN_9C00 | LCDC_OBJ_ON | LCDC_OBJ_16
     ldh [hLCDC], a
     ldh [rLCDC], a
     
