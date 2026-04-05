@@ -6,17 +6,20 @@ SECTION "Interrupts", ROM0
 DisableSTATInterrupts::
     xor a
     ld [rSTAT], a
-    di
+    ld a, $FD ; $FD = Disable STAT
+    ld b, a
+    ld a, [rIE]
+    and a, b ; Logical AND rIE with $FD to disable STAT Interrupts
+    ldh [rIE], a
 
     ret
 
 
 EnableSTATInterrupts::
-    ;ld a, IE_STAT
-    ld a, $02
+    ld a, $02 ; $02 = Enable STAT
     ld b, a
     ld a, [rIE]
-    or a, b
+    or a, b ; Logical OR rIE with $02 to enable STAT Interrupts
     ldh [rIE], a
     xor a
     ldh [rIF], a
@@ -38,14 +41,14 @@ SECTION "STAT Interrupt", ROM0[$0048]
 
 
 StatInterrupt:
-    push af
+    push af ; Pushing AF to the stack to avoid corruption of whatever value was stored there when this routine is called
 
     ; Checking if we're on the first scanline
     ldh a, [rLY]
     and a
-    jp z, .LYCIsZero
+    jp z, .LYIsZero
 
-.LYCIs136:
+.LYIs136:
     ; Don't call next STAT interrupt until scanline 8
     xor a
     ldh [rLYC], a
@@ -57,7 +60,7 @@ StatInterrupt:
 
     jp StatInterruptEnd
 
-.LYCIsZero:
+.LYIsZero:
     ; Don't call next STAT interrupt until scanline 8
     ld a, 136
     ldh [rLYC], a
@@ -68,6 +71,6 @@ StatInterrupt:
     ldh [rLCDC], a
 
 StatInterruptEnd:
-    pop af
+    pop af ; Popping AF back from the stack since the routine is over and we can resume game execution
 
     reti

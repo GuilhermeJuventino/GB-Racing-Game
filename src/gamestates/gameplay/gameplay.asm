@@ -9,8 +9,6 @@ InitGameplay::
     ldh [hLCDC], a
     ldh [rLCDC], a
 
-    ;call EnableSTATInterrupts
-
     ; Copying Title Screen data to VRAM
     ld de, RaceTrackTiles
     ld hl, $9000

@@ -13,13 +13,12 @@ InitGameStateMachine::
     ld bc, FontTilesEnd - FontTiles
     call LCDMemcpy
 
-    ;call DisableSTATInterrupts
-
     ret
 
 
 GameStateManager::
     call WaitVBlank
+    call DisableSTATInterrupts
 
     ld a, [wCurrentGameState]
     cp a, 0
