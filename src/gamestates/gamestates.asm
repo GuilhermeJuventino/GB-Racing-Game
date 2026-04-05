@@ -13,6 +13,8 @@ InitGameStateMachine::
     ld bc, FontTilesEnd - FontTiles
     call LCDMemcpy
 
+    ;call DisableSTATInterrupts
+
     ret
 
 

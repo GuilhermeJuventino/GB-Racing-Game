@@ -9,6 +9,8 @@ InitGameplay::
     ldh [hLCDC], a
     ldh [rLCDC], a
 
+    ;call EnableSTATInterrupts
+
     ; Copying Title Screen data to VRAM
     ld de, RaceTrackTiles
     ld hl, $9000
@@ -46,12 +48,14 @@ InitGameplay::
     ld a, LCDC_ON | LCDC_BG_ON | LCDC_WIN_ON | LCDC_WIN_9C00 | LCDC_OBJ_ON | LCDC_OBJ_16
     ldh [hLCDC], a
     ldh [rLCDC], a
-    
+     
     ; Initializing state flag variables
     ld [wShouldExitGameplayState], a
 
     call InitPlayer
     call InitEnemies
+    
+    call EnableSTATInterrupts
 
     ret
 
