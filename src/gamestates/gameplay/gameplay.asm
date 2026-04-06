@@ -31,11 +31,7 @@ InitGameplay::
     ld bc, $9FFF - $9C00
     call LCDMemset
 
-    ld a, 4
-    ld b, a
-    xor a
-    ld c, a
-    ld de, $9C00
+    ld de, $9C00 + 4
     ld hl, wHelloText
     call PrintText
     
