@@ -48,8 +48,8 @@ StatInterrupt:
     and a
     jp z, .LYIsZero
 
-.LYIs136:
-    ; Don't call next STAT interrupt until scanline 8
+.LYIs135:
+    ; Don't call next STAT interrupt until scanline 0
     xor a
     ldh [rLYC], a
 
@@ -61,8 +61,8 @@ StatInterrupt:
     jp StatInterruptEnd
 
 .LYIsZero:
-    ; Don't call next STAT interrupt until scanline 8
-    ld a, 136
+    ; Don't call next STAT interrupt until scanline 135
+    ld a, 135
     ldh [rLYC], a
 
     ; Turning on LCD and Sprites, but keeping window disabled

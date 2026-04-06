@@ -30,6 +30,14 @@ InitGameplay::
     ld hl, $9C00
     ld bc, $9FFF - $9C00
     call LCDMemset
+
+    ld a, 4
+    ld b, a
+    xor a
+    ld c, a
+    ld de, $9C00
+    ld hl, wHelloText
+    call PrintText
     
     ; Reset Background Scroll position
     xor a
@@ -37,9 +45,10 @@ InitGameplay::
     ld [hSCY], a
     
     ; Setting Window layer's position
+    ld a, 7
     ld [rWX], a
 
-    ld a, 136
+    ld a, 135
     ld [rWY], a
     
     ; Turning LCD, Window and OBJ Layer back on
