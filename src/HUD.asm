@@ -55,6 +55,34 @@ PrintText::
     jp .loop
 
 
+; Print the Score or High Score to the specified tilemap at the specified coordinates
+; param hl: Score address (used as parameter so same function can be used to print either score or high score)
+; param de: Tilemap. By default it will print at the start of the tilemap.
+; If you desire to specify a X coordinate to print, you can do
+; de = Tilemap + X.
+; To specify both X and Y coordinates, do de = Tilemap + X + Y * 32 (32 being the height of the Tilemaps)
+
+PrintScore::
+    ld c, 6
+
+.loop
+    ld a, [hli]
+    add $8A ; Numeric tiles start at $8A, so we add that to each byte's value
+    ld [de], a
+
+    ; Decrement loop counter
+    dec c
+
+    ; Return once all digits have been drawn
+    ret z
+    
+    ; Increase which digit we are drawing to
+    inc de
+
+    jp .loop
+
+
+
 SECTION "HUD Variables", WRAM0
 
 
@@ -64,4 +92,4 @@ SECTION "HUD Graphics", ROM0
 FontTiles:: INCBIN "assets/HUD/Font/font.2bpp"
 FontTilesEnd::
 
-wHelloText:: db "hello world", 255
+wScoreText:: db "score", 255

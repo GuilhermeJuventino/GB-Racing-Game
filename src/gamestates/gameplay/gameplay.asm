@@ -31,8 +31,8 @@ InitGameplay::
     ld bc, $9FFF - $9C00
     call LCDMemset
 
-    ld de, $9C00 + 4
-    ld hl, wHelloText
+    ld de, $9C00
+    ld hl, wScoreText
     call PrintText
     
     ; Reset Background Scroll position
@@ -51,9 +51,23 @@ InitGameplay::
     ld a, LCDC_ON | LCDC_BG_ON | LCDC_WIN_ON | LCDC_WIN_9C00 | LCDC_OBJ_ON | LCDC_OBJ_16
     ldh [hLCDC], a
     ldh [rLCDC], a
-     
+    
+    xor a
     ; Initializing state flag variables
     ld [wShouldExitGameplayState], a
+    
+    ld a, 6
+    ld [wScore], a
+    xor a
+    ld [wScore + 1], a
+    ld a, 2
+    ld [wScore + 2], a
+    ld a, 1
+    ld [wScore + 3], a
+    ld a, 3
+    ld [wScore + 4], a
+    ld a, 5
+    ld [wScore + 5], a
 
     call InitPlayer
     call InitEnemies
@@ -69,6 +83,10 @@ UpdateGameplay::
     jp nc, UpdateGameplay
     
     call WaitVBlank
+
+    ld hl, wScore
+    ld de, $9C00 + 6
+    call PrintScore
 
     call ClearShadowOAM
 
@@ -105,6 +123,11 @@ wRaceTrackMap:: db
 
 ; Variable to track whether or not the game should exit the gameplay state
 wShouldExitGameplayState:: db
+
+; Player Score
+wScore:: ds 6
+
+wHiScore:: ds 6
 
 
 SECTION "Racing Track Graphics", ROM0
