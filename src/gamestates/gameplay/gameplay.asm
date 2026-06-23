@@ -31,7 +31,7 @@ InitGameplay::
     ld bc, $9FFF - $9C00
     call LCDMemset
 
-    ld de, $9C00
+    ld de, $9C00 + 4
     ld hl, wScoreText
     call PrintText
     
@@ -56,18 +56,16 @@ InitGameplay::
     ; Initializing state flag variables
     ld [wShouldExitGameplayState], a
     
-    ld a, 6
     ld [wScore], a
-    xor a
     ld [wScore + 1], a
-    ld a, 2
     ld [wScore + 2], a
-    ld a, 1
     ld [wScore + 3], a
-    ld a, 3
     ld [wScore + 4], a
-    ld a, 5
     ld [wScore + 5], a
+
+    ld a, 8
+    ld [wScoreTick], a
+    ld [wScoreTickTime], a
 
     call InitPlayer
     call InitEnemies
@@ -85,7 +83,7 @@ UpdateGameplay::
     call WaitVBlank
 
     ld hl, wScore
-    ld de, $9C00 + 6
+    ld de, $9C00 + 10
     call PrintScore
 
     call ClearShadowOAM
@@ -108,6 +106,10 @@ UpdateGameplay::
     call UpdatePlayer
     call UpdateEnemies
 
+    ld hl, wScore + 5
+    ld de, wScoreTick
+    call IncrementScore
+
     ; Start OAM DMA transfer
     ld a, HIGH(wShadowOAM)
     ldh [hOAMHigh], a
@@ -128,6 +130,10 @@ wShouldExitGameplayState:: db
 wScore:: ds 6
 
 wHiScore:: ds 6
+
+wScoreTick: db
+
+wScoreTickTime:: db
 
 
 SECTION "Racing Track Graphics", ROM0

@@ -82,6 +82,84 @@ PrintScore::
     jp .loop
 
 
+; Increment the Score after the score tick timer reaches zero
+; param hl: Socre + 5 (so that you start with the first digit from right to left)
+; param de: The current score tick time
+
+IncrementScore::
+    ; Check if score tick timer has reached zero, if not, decrement timer and return
+    ld a, [de]
+    cp 0
+    jp z, .tickEnd
+
+.tick
+    ; Decrement tick timer and return
+    dec a
+    ld [de], a
+
+    ret
+
+.tickEnd
+
+    ld c, 0 ; Loop counter
+
+.loop
+    ld a, [hl] ; Current Digit
+    add 1
+    daa ; converting to Binary Coded Decimal
+    ld [hl], a
+
+    cp 10 ; Check if current digit is hasn't gone past zero
+    jp c, .loopEnd ; if so, return
+
+    inc c ; incrementing counter
+    ld a, c
+
+    cp 6
+    jp nz, .capAt999999End ; Check if loop counter has not gone over the score bounds (return if so)
+    
+
+.capAt999999
+    ld a, [hl]
+    cp 9
+    jp c, .loopEnd ; Checking if the final digit hasn't gone past 9
+
+    ld a, 9
+    ld [hl], a
+    ld [hli], a
+     
+    ld [hl], a
+    ld [hli], a
+
+    ld [hl], a
+    ld [hli], a
+
+    ld [hl], a
+    ld [hli], a
+
+    ld [hl], a
+    ld [hli], a
+
+    ret
+
+.capAt999999End
+
+    ; If not at the final digit of the score, and current digit has gone past zero
+    ld a, 0 
+
+    ; Settung current digit to zero and moving on to the next digit
+    ld [hl], a
+    ld [hld], a
+    
+    jp .loop
+
+.loopEnd
+    ; Reset score tick timer and return
+    ld a, [wScoreTickTime]
+    ld [de], a
+
+    ret
+
 
 SECTION "HUD Variables", WRAM0
 
