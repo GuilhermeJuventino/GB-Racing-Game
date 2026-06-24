@@ -30,7 +30,7 @@ InitEnemies::
         ld a, [wEnemyIndex]
         inc a
         ld [wEnemyIndex], a
-        cp 4
+        cp 7
         jp c, .initLoop
     .initLoopEnd:
     
@@ -193,7 +193,7 @@ SetEnemySprite:
         inc a
         ld [wEnemyIndex], a
         
-        cp 4
+        cp 7
         jp c, .setSpriteLoop
     .setSpriteLoopEnd:
     
@@ -222,11 +222,11 @@ RollEnemyPosition:
 
 
 SetSpawnTimer:
-    def MIN_DELAY equ 32
-    def MAX_DELAY equ 120
+    def MIN_DELAY equ 16
+    def MAX_DELAY equ 64
 
     def RANGE_DELAY equ MAX_DELAY - MIN_DELAY
-    def MODULO_DELAY equ 88
+    def MODULO_DELAY equ 48
 
 .roll:
     call rand
@@ -275,7 +275,7 @@ EnemySpawner:
     inc a
     ld [wEnemyIndex], a
 
-    cp 4
+    cp 7
     jp c, .loop
 
     ret
@@ -338,7 +338,7 @@ MoveEnemies:
     inc a
     ld [wEnemyIndex], a
     
-    cp 4
+    cp 7
     jp c, .loop
 
     ret
@@ -382,7 +382,7 @@ MoveEnemies:
     inc a
     ld [wEnemyIndex], a
 
-    cp 4
+    cp 7
     jp c, .loop
 
     ret
@@ -404,7 +404,7 @@ MoveEnemies:
     inc a
     ld [wEnemyIndex], a
 
-    cp 4
+    cp 7
     jp c, .loop 
 
 ret
@@ -441,4 +441,4 @@ wEnemyIndex:: db
 
 def STRUCTS_EXPORT_CONSTANTS equ 1
 
-dstructs 4, Enemy, wEnemies
+dstructs 7, Enemy, wEnemies

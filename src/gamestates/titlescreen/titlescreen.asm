@@ -30,6 +30,12 @@ InitTitleScreen::
     ldh [hLCDC], a
     ldh [rLCDC], a
 
+    xor a
+    ld [randstate], a
+    ld [randstate + 1], a
+    ld [randstate + 2], a
+    ld [randstate + 3], a
+
     ret
 
 

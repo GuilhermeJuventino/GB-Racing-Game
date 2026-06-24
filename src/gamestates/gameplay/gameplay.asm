@@ -67,6 +67,12 @@ InitGameplay::
     ld [wScoreTick], a
     ld [wScoreTickTime], a
 
+    xor a
+    ld [randstate], a
+    ld [randstate + 1], a
+    ld [randstate + 2], a
+    ld [randstate + 3], a
+
     call InitPlayer
     call InitEnemies
     
@@ -81,6 +87,7 @@ UpdateGameplay::
     jp nc, UpdateGameplay
     
     call WaitVBlank
+    call rand
 
     ld hl, wScore
     ld de, $9C00 + 10
@@ -113,6 +120,9 @@ UpdateGameplay::
     ; Start OAM DMA transfer
     ld a, HIGH(wShadowOAM)
     ldh [hOAMHigh], a
+
+    ldh a, [rDIV]
+    ld [randstate], a
 
     jp UpdateGameplay
 

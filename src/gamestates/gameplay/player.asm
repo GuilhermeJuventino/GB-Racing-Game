@@ -191,7 +191,7 @@ CheckPlayerSpriteCollision:
     inc a
     ld [wEnemyIndex], a
 
-    cp 4
+    cp 7
     jp c, .loop
 
     jp .collisionFoundEnd
