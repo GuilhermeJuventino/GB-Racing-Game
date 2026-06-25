@@ -186,12 +186,15 @@ CheckPlayerSpriteCollision:
     add hl, de
     ld d, h
     ld e, l
+    
+    ld a, [wEnemiesLen]
+    ld b, a
 
     ld a, [wEnemyIndex]
     inc a
     ld [wEnemyIndex], a
 
-    cp 7
+    cp a, b
     jp c, .loop
 
     jp .collisionFoundEnd

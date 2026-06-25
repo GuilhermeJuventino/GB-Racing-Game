@@ -24,13 +24,19 @@ InitEnemies::
  
     ld de, wEnemies0
 
+    ld a, 7
+    ld [wEnemiesLen], a
+
     .initLoop:
         call InitEnemy
-        
+        ld a, [wEnemiesLen]
+        ld b, a
+
         ld a, [wEnemyIndex]
         inc a
         ld [wEnemyIndex], a
-        cp 7
+
+        cp a, b
         jp c, .initLoop
     .initLoopEnd:
     
@@ -189,11 +195,14 @@ SetEnemySprite:
         ld l, c
         
         ; Incrementing Loop Index
+        ld a, [wEnemiesLen]
+        ld b, a
+
         ld a, [wEnemyIndex]
         inc a
         ld [wEnemyIndex], a
-        
-        cp 7
+
+        cp a, b
         jp c, .setSpriteLoop
     .setSpriteLoopEnd:
     
@@ -270,12 +279,15 @@ EnemySpawner:
 
     ld hl, sizeof_Enemy
     add hl, de
+    
+    ld a, [wEnemiesLen]
+    ld b, a
 
     ld a, [wEnemyIndex]
     inc a
     ld [wEnemyIndex], a
-
-    cp 7
+    
+    cp a, b
     jp c, .loop
 
     ret
@@ -334,11 +346,15 @@ MoveEnemies:
     ld l, c
 
     add hl, de
+    
+    ld a, [wEnemiesLen]
+    ld b, a
+
     ld a, [wEnemyIndex]
     inc a
     ld [wEnemyIndex], a
     
-    cp 7
+    cp a, b
     jp c, .loop
 
     ret
@@ -377,12 +393,15 @@ MoveEnemies:
     ld l, c
 
     add hl, de
+    
+    ld a, [wEnemiesLen]
+    ld b, a
 
     ld a, [wEnemyIndex]
     inc a
     ld [wEnemyIndex], a
 
-    cp 7
+    cp a, b
     jp c, .loop
 
     ret
@@ -399,12 +418,15 @@ MoveEnemies:
     ld l, c
 
     add hl, de
+    
+    ld a, [wEnemiesLen]
+    ld b, a
 
     ld a, [wEnemyIndex]
     inc a
     ld [wEnemyIndex], a
 
-    cp 7
+    cp a, b
     jp c, .loop 
 
 ret
@@ -442,3 +464,6 @@ wEnemyIndex:: db
 def STRUCTS_EXPORT_CONSTANTS equ 1
 
 dstructs 7, Enemy, wEnemies
+
+wEnemiesLen:: db
+
