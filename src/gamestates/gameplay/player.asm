@@ -219,6 +219,7 @@ CheckPlayerVsEnemyCollision:
     def Y_OFFSET equ 8
 
     ; CASE 1: player.x < enemy.x + width
+    inc de
     inc de ; Enemy.x
 
     ld a, [de]
@@ -244,7 +245,7 @@ CheckPlayerVsEnemyCollision:
     jp c, .noCollisionAdjustDE
 
     ; CASE 3: player.y < enemy.y + height
-    dec de ; Decrementing back to start of pointer, A.K.A. Enemy.y
+    dec de ; Decrementing to Enemy.y
 
     ld a, [de]
     add a, HEIGHT
@@ -263,7 +264,7 @@ CheckPlayerVsEnemyCollision:
     ld a, [wPlayer_y]
 
     add a, HEIGHT
-
+    
     cp a, b
     jp c, .noCollision
 
@@ -271,15 +272,23 @@ CheckPlayerVsEnemyCollision:
     jp .noCollisionEnd
 
 .noCollisionAdjustDE 
-    dec de ; Decrementing back to start of pointer, A.K.A. Enemy.y
+    dec de
+    dec de ; Decrementing back to start of pointer, A.K.A. Enemy.FractionalY
+
+    xor a
+    ld c, a
+
+    ret
 
 .noCollision
+    dec de ; Decrementing back to start of pointer, A.K.A. Enemy.FractionalY
     xor a
     ld c, a
 
     ret
 
 .noCollisionEnd
+    dec de ; Decrementing back to start of pointer, A.K.A. Enemy.FractionalY
     ld a, 1
     ld c, a
 

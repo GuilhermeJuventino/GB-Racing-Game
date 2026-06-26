@@ -1,8 +1,9 @@
 INCLUDE "defines.inc"
 
 struct Enemy
-    words 1, y
-    words 1, x
+    bytes 1, fy
+    bytes 1, y
+    bytes 1, x
     bytes 1, metaspriteLeft
     bytes 1, metaspriteRight
     bytes 1, active
@@ -54,8 +55,11 @@ InitEnemy:
     ld h, d
     ld l, e
     
-    ; wEnemies[i] Y pos
+    ; wEnemies[i] fractional Y pos
     xor a
+    ld [hli], a
+    
+    ; wEnemies[i] Y pos
     ld [hli], a
 
     ; wEnemies[i] X pos
@@ -73,8 +77,7 @@ InitEnemy:
     ; wEnemies[i] active
     xor a
     ld [hli], a
-    
-    
+        
     ; Incrementing wEnemies pointer stored in DE to point to the next entry in the array
     ld hl, sizeof_Enemy
     add hl, de
@@ -99,6 +102,8 @@ SetEnemySprite:
 
         ld h, d
         ld l, e
+        
+        inc hl
 
         ld a, [hl]
         ld h, b
@@ -113,6 +118,7 @@ SetEnemySprite:
 
         ; X Pos Offset
         inc hl
+        inc hl
 
         ld a, [hl]
         ld h, b
@@ -126,6 +132,7 @@ SetEnemySprite:
         ld l, e
 
         ; Left Metasprite Offset
+        inc hl
         inc hl
         inc hl
 
@@ -143,6 +150,8 @@ SetEnemySprite:
 
         ld h, d
         ld l, e
+        
+        inc hl
 
         ld a, [hl]
         ld h, b
@@ -156,6 +165,7 @@ SetEnemySprite:
         ld l, e
         
         ; X Pos Offset
+        inc hl
         inc hl
 
         ld a, [hl]
@@ -171,6 +181,7 @@ SetEnemySprite:
         ld l, e
 
         ; Right Metasrptie Offset
+        inc hl
         inc hl
         inc hl
         inc hl
@@ -260,7 +271,7 @@ EnemySpawner:
     ld [wEnemyIndex], a
     
 .loop:
-    ld de, 4
+    ld de, 5
     add hl, de ; wEnemies[i]. active
     
     ld a, [hl]
@@ -272,7 +283,8 @@ EnemySpawner:
     dec hl
     dec hl
     dec hl
-    dec hl ; Back to wEnemies[i].active
+    dec hl
+    dec hl ; Back to wEnemies[i].FractionalY
 
     ld d, h
     ld e, l
@@ -299,7 +311,8 @@ EnemySpawner:
     dec hl
     dec hl
     dec hl
-    dec hl ; Back to wEnemies[i].active
+    dec hl
+    dec hl ; Back to wEnemies[i].FractionalY
 
     ; Randomizing current Eenmy's X Position and moving on to the next entry
     push hl
@@ -309,11 +322,12 @@ EnemySpawner:
     pop hl
 
     inc hl
+    inc hl
     ld a, [wXPos]
     ld [hl], a
     call SetSpawnTimer
     
-ret
+    ret
 
 
 ; Loops through the wEnemies array and updates their Y coordinates accordingly
@@ -325,7 +339,7 @@ MoveEnemies:
 .loop:
     ld bc, sizeof_Enemy
 
-    ld de, 4
+    ld de, 5
     add hl, de ; wEnemies[i].active
 
     ld a, [hl]
@@ -337,7 +351,8 @@ MoveEnemies:
     dec hl
     dec hl
     dec hl
-    dec hl ; Back to wEnemies[i].y
+    dec hl
+    dec hl ; Back to wEnemies[i].FractionalY
 
     ld d, h
     ld e, l
@@ -379,11 +394,12 @@ MoveEnemies:
     inc hl ; wEnemies[i].active
     
     ld [hl], a
-
+    
     dec hl
     dec hl
     dec hl
-    dec hl ; Back to wEnemies[i].y
+    dec hl
+    dec hl ; Back to wEnemies[i].FractionalY
     
     ; Moving to next entry in wEnemies
     ld d, h
@@ -407,9 +423,22 @@ MoveEnemies:
     ret
 
 .resetPositionEnd:
+    dec hl
+    
+    ld a, [hl]
+    add a, 220
+    ld [hl], a ; Increasing wEnemy[i].FractionalY
+    jr nc, .skipCarry
+
+    inc hl
+    ld a, [hl]
+
     inc a
     ld [hl], a ; Incrementing wEnemies[i].y position
+    
+    dec hl
 
+.skipCarry:
     ; Moving to next entry in wEnemies
     ld d, h
     ld e, l
@@ -429,7 +458,7 @@ MoveEnemies:
     cp a, b
     jp c, .loop 
 
-ret
+    ret
 
 
 ; Update enemies' position and graphics
