@@ -26,6 +26,9 @@ GameStateManager::
 
     cp a, 1
     jp z, .gameplayState
+
+    cp a, 2
+    jp z, .gameOverState
     
     ret
 
@@ -40,6 +43,13 @@ GameStateManager::
 .gameplayState:
     call InitGameplay
     call UpdateGameplay
+
+    jp GameStateManager
+
+
+.gameOverState:
+    call InitGameOver
+    call UpdateGameOver
 
     jp GameStateManager
 
