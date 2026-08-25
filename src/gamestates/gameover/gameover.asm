@@ -43,7 +43,7 @@ UpdateGameOver::
     jp z, .exitGameOverEnd
 
     .exitGameOver:
-        ld a, 1
+        ld a, 1 ; Exiting to gameplay state
         ld [wCurrentGameState], a
         ret
     .exitGameOverEnd:
