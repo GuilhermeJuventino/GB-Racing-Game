@@ -97,13 +97,13 @@ UpdateGameplay::
 
     ld a, [wShouldExitGameplayState]
     cp 1
-    jp nz, .exitTitleScreenEnd
+    jp nz, .exitGameplayEnd
 
-    .exitTitleScreen:
-        ld a, 0
+    .exitGameplay:
+        ld a, 2 ; Exiting to game over state
         ld [wCurrentGameState], a
         ret
-    .exitTitleScreenEnd:
+    .exitGameplayEnd:
     
     ; Scrolling the Background vertically
     ld a, [hSCY]
