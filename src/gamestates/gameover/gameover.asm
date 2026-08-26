@@ -15,6 +15,11 @@ InitGameOver::
     ld bc, $9BFF - $9800
     call LCDMemset
 
+    ; Printing game over text
+    ld de, $9800
+    ld hl, wGameOverText
+    call PrintText
+
     ; Reset Background Scroll position
     xor a
     ld [hSCX], a
@@ -52,5 +57,10 @@ UpdateGameOver::
     ld a, HIGH(wShadowOAM)
     ldh [hOAMHigh], a
 
-    jp UpdateTitleScreen
+    jp UpdateGameOver
+
+
+;SECTION "Game Over Graphics", ROM0
+
+;wGameOverText: db "game over", 255
 

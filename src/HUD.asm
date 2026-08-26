@@ -170,4 +170,7 @@ SECTION "HUD Graphics", ROM0
 FontTiles:: INCBIN "assets/HUD/Font/font.2bpp"
 FontTilesEnd::
 
+; Note: All text apparently needs to live in the same file as the character map for it to work... for some reason..
 wScoreText:: db "score", 255
+
+wGameOverText:: db "game over", 255
