@@ -139,8 +139,6 @@ wShouldExitGameplayState:: db
 ; Player Score
 wScore:: ds 6
 
-wHiScore:: ds 6
-
 wScoreTick: db
 
 wScoreTickTime:: db

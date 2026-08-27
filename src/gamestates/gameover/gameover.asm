@@ -34,11 +34,35 @@ InitGameOver::
     ld de, $9800 + 2 + 12 * 32
     ld hl, rHiScoreText
     call PrintText
+
+    ld a, RAMG_SRAM_ENABLE
+    ld [rRAMG], a
+
+    ;
+    call CompareScores
+    cp a, 1
+    jp nz, .newHighScoreEnd
+
+.newHighScore 
+    ld de, rChecksumBytes
+    ld hl, sChecksum
+    ld bc, sChecksumEnd - sChecksum
+    call Memcpy
+
+    ld de, wScore
+    ld hl, sHiScore
+    ld bc, sHiScoreEnd - sHiScore
+    call Memcpy
+
+.newHighScoreEnd
     
     ; Printing high score
-    ld hl, wScore
+    ld hl, sHiScore
     ld de, $9800 + 12 + 12 * 32
     call PrintScore
+
+    ld a, RAMG_SRAM_DISABLE
+    ld [rRAMG], a
 
     ; Reset Background Scroll position
     xor a
