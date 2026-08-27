@@ -20,15 +20,25 @@ InitGameOver::
     ld hl, rGameOverText
     call PrintText
 
-    ; Printing game over text
+    ; Printing score text
     ld de, $9800 + 2 + 9 * 32
     ld hl, rScoreText
     call PrintText
+    
+    ; Printing score
+    ld hl, wScore
+    ld de, $9800 + 12 + 9 * 32
+    call PrintScore
 
-    ; Printing game over text
+    ; Printing high score text
     ld de, $9800 + 2 + 12 * 32
     ld hl, rHiScoreText
     call PrintText
+    
+    ; Printing high score
+    ld hl, wScore
+    ld de, $9800 + 12 + 12 * 32
+    call PrintScore
 
     ; Reset Background Scroll position
     xor a
