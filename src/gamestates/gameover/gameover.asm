@@ -16,8 +16,18 @@ InitGameOver::
     call LCDMemset
 
     ; Printing game over text
-    ld de, $9800
-    ld hl, wGameOverText
+    ld de, $9800 + 5 + 5 * 32
+    ld hl, rGameOverText
+    call PrintText
+
+    ; Printing game over text
+    ld de, $9800 + 2 + 9 * 32
+    ld hl, rScoreText
+    call PrintText
+
+    ; Printing game over text
+    ld de, $9800 + 2 + 12 * 32
+    ld hl, rHiScoreText
     call PrintText
 
     ; Reset Background Scroll position
@@ -58,9 +68,4 @@ UpdateGameOver::
     ldh [hOAMHigh], a
 
     jp UpdateGameOver
-
-
-;SECTION "Game Over Graphics", ROM0
-
-;wGameOverText: db "game over", 255
 

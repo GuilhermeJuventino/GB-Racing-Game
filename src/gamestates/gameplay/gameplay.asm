@@ -32,7 +32,7 @@ InitGameplay::
     call LCDMemset
 
     ld de, $9C00 + 4
-    ld hl, wScoreText
+    ld hl, rScoreText
     call PrintText
     
     ; Reset Background Scroll position
