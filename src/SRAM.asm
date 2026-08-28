@@ -71,6 +71,7 @@ CompareScores::
 
 SECTION "Checksum Data", ROM0
 
+
 ; Bytes to be written and checked for validating save files ($FF marks the end of the checksum)
 rChecksumBytes:: db $43, $48, $41, $54, $55, $42, $41, $43, $4F, $4D, $45, $43, $55
 rChecksumBytesEnd::

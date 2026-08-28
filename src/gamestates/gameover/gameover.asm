@@ -54,6 +54,11 @@ InitGameOver::
     ld bc, sHiScoreEnd - sHiScore
     call Memcpy
 
+    ; Printing new record text
+    ld de, $9800 + 5 + 15 * 32
+    ld hl, rNewRecordText
+    call PrintText
+
 .newHighScoreEnd
     
     ; Printing high score

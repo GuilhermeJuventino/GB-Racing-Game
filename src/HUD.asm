@@ -176,3 +176,5 @@ rScoreText:: db "score", 255
 rHiScoreText:: db "hi score", 255
 
 rGameOverText:: db "game over", 255
+
+rNewRecordText:: db "new record", 255
