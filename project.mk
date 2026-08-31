@@ -1,6 +1,6 @@
-VERSION := 0
-GAMEID := GBRG
-TITLE := RacingGame
+VERSION := 1
+GAMEID := CGV
+TITLE := CarGoVroom
 LICENSEE := HB
 OLDLIC := 0x33
 MBC := MBC5+RAM+BATTERY
@@ -12,5 +12,5 @@ SRAMSIZE := 0x02
 # LDFLAGS += -w
 # LDFLAGS += -t
 PADVALUE := 0xFF
-ROMNAME := GB-Racing-Game
+ROMNAME := CarGoVroom
 ROMEXT  := gb
