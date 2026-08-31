@@ -24,6 +24,19 @@ InitTitleScreen::
     xor a
     ld [hSCX], a
     ld [hSCY], a
+ 
+    ; Printing title screen text 
+    ld de, $9800 + 5 + 12 * 32
+    ld hl, rPressStartText
+    call PrintText
+
+    ld de, $9800 + 4 + 15 * 32
+    ld hl, rCreatedByText
+    call PrintText
+
+    ld de, $9800 + 3 + 16 * 32
+    ld hl, rMadeWithText
+    call PrintText
     
     ; Turning LCD back on
     ld a, LCDC_ON | LCDC_BG_ON | LCDC_WIN_OFF | LCDC_OBJ_OFF | LCDC_OBJ_16

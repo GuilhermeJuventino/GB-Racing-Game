@@ -178,3 +178,9 @@ rHiScoreText:: db "hi score", 255
 rGameOverText:: db "game over", 255
 
 rNewRecordText:: db "new record", 255
+
+rCreatedByText:: db "by costelinha", 255
+
+rMadeWithText:: db "made with rgbds", 255
+
+rPressStartText:: db "press start", 255
