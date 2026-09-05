@@ -4,6 +4,13 @@ SECTION "Title Screen", ROM0
 
 
 InitTitleScreen::
+    
+
+.loop
+    ld a, [rLY]
+    cp 144
+    jp c, .loop
+
     ; Turning LCD and OBJ Layer off to load title screen assets
     ld a, LCDC_OFF | LCDC_BG_OFF | LCDC_WIN_OFF | LCDC_OBJ_OFF | LCDC_OBJ_16
     ldh [hLCDC], a

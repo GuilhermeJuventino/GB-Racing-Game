@@ -4,6 +4,13 @@ SECTION "Gameplay", ROM0
 
 
 InitGameplay::
+    
+
+.loop
+    ld a, [rLY]
+    cp 144
+    jp c, .loop
+
     ; Turning LCD, Window and OBJ Layer off to load gameplay assets
     ld a, LCDC_OFF | LCDC_BG_OFF | LCDC_WIN_OFF | LCDC_OBJ_OFF
     ldh [hLCDC], a
