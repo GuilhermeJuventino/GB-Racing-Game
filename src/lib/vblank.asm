@@ -9,19 +9,19 @@ SECTION "WaitVBlank", ROM0
 ;  - the LCD should be turned on.
 ; @destroy Every register
 WaitVBlank:: align 16, $08 ; Suitable for `rst WaitVBlank`.
-	runtime_assert ime, "`WaitVBlank` called with interrupts disabled!"
-	runtime_assert [{rIE}] & {IE_VBLANK}, "`WaitVBlank` called with VBlank interrupt disabled!"
-	runtime_assert [{rLCDC}] & {LCDC_ENABLE}, "`WaitVBlank` called with LCD off!"
-	; This function may seem magical: an infinite loop that somehow exits!?
-	; Like all magic, there's a secret to it:
-	;   the logic that exits this function is not in the function itself,
-	;   but in the VBlank handler.
-	; The VBlank handler recognises being called from this function (via the `hVBlankFlag` variable)
-	;   and manipulates the stack in order to return to this function's caller.
-	ld a, 1 :: ldh [hVBlankFlag], a
+    runtime_assert ime, "`WaitVBlank` called with interrupts disabled!"
+    runtime_assert [{rIE}] & {IE_VBLANK}, "`WaitVBlank` called with VBlank interrupt disabled!"
+    runtime_assert [{rLCDC}] & {LCDC_ENABLE}, "`WaitVBlank` called with LCD off!"
+    ; This function may seem magical: an infinite loop that somehow exits!?
+    ; Like all magic, there's a secret to it:
+    ;   the logic that exits this function is not in the function itself,
+    ;   but in the VBlank handler.
+    ; The VBlank handler recognises being called from this function (via the `hVBlankFlag` variable)
+    ;   and manipulates the stack in order to return to this function's caller.
+    ld a, 1 :: ldh [hVBlankFlag], a
 .wait
-	halt
-	jr .wait
+    halt
+    jr .wait
 .end
 
 
@@ -53,6 +53,8 @@ hPressedKeys:: db
 ; Set this to 0 to inhibit that behaviour.
 hCanSoftReset:: db
 
+hSoundUpdate:: db
+
 ; DO NOT TOUCH THIS!!
 ; When this flag is set, the VBlank handler will assume the caller is `WaitVBlank`, and attempt to exit it.
 ; You don't want this to happen outside of that function.
@@ -61,134 +63,154 @@ hVBlankFlag:: db
 
 SECTION "VBlank handler stub", ROM0[INT_HANDLER_VBLANK]
 
-	push af
-	; First, copy shadow registers to their actual counterparts.
-	ldh a, [hLCDC] :: ldh [rLCDC], a
-	jr VBlankHandler ; There isn't room here for more instructions; continued below.
+    push af
+    ; First, copy shadow registers to their actual counterparts.
+    ldh a, [hLCDC] :: ldh [rLCDC], a
+    jr VBlankHandler ; There isn't room here for more instructions; continued below.
 
 SECTION "VBlank handler", ROM0
 
 VBlankHandler:
-	ldh a, [hSCY]  :: ldh [rSCY], a
-	ldh a, [hSCX]  :: ldh [rSCX], a
-	ldh a, [hBGP]  :: ldh [rBGP], a
-	ldh a, [hOBP0] :: ldh [rOBP0], a
-	ldh a, [hOBP1] :: ldh [rOBP1], a
+    ldh a, [hSCY]  :: ldh [rSCY], a
+    ldh a, [hSCX]  :: ldh [rSCX], a
+    ldh a, [hBGP]  :: ldh [rBGP], a
+    ldh a, [hOBP0] :: ldh [rOBP0], a
+    ldh a, [hOBP1] :: ldh [rOBP1], a
 
 
-	; OAM DMA can occur late in the handler, because it will still work even outside of VBlank.
-	; OBJs just will not appear on the scanline(s) during which it's running.
-	ldh a, [hOAMHigh]
-	and a
-	jr z, .noOAMTransfer
-	call hOAMDMA
-	xor a :: ldh [hOAMHigh], a
+    ; OAM DMA can occur late in the handler, because it will still work even outside of VBlank.
+    ; OBJs just will not appear on the scanline(s) during which it's running.
+    ldh a, [hOAMHigh]
+    and a
+    jr z, .noOAMTransfer
+    call hOAMDMA
+    xor a :: ldh [hOAMHigh], a
 .noOAMTransfer
 
 
-	; Put all operations that cannot be interrupted above this line.
-	; For example, OAM DMA (can't jump to ROM in the middle of it),
-	; VRAM accesses (can't screw up timing), etc
-	ei
+    ; Put all operations that cannot be interrupted above this line.
+    ; For example, OAM DMA (can't jump to ROM in the middle of it),
+    ; VRAM accesses (can't screw up timing), etc
+    ei
+
+    ; save context
+    push bc
+    push de
+    push hl
+
+    ; check if sound should be updated
+    ldh a, [hSoundUpdate]
+    and a
+    jr z, .no_init
+    call hUGE_dosound
+
+.no_init
+    ; restore context
+    pop hl
+    pop de
+    pop bc
+
+    ldh a, [hVBlankFlag]
+    and a
+    jr z, .lagFrame
+    xor a
+    ldh [hVBlankFlag], a
 
 
-	ldh a, [hVBlankFlag]
-	and a
-	jr z, .lagFrame
-	xor a
-	ldh [hVBlankFlag], a
+    ld c, LOW(rP1)
+    ld a, JOYP_GET_CTRL_PAD
+    call .readOneNibble
+    or $F0 ; Set 4 upper bits (they are garbage otherwise).
+    swap a ; Put D-pad buttons in upper nibble.
+    ld b, a
 
-
-	ld c, LOW(rP1)
-	ld a, JOYP_GET_CTRL_PAD
-	call .readOneNibble
-	or $F0 ; Set 4 upper bits (they are garbage otherwise).
-	swap a ; Put D-pad buttons in upper nibble.
-	ld b, a
-
-	; Filter impossible D-pad combinations, and treat them as if neither key was pressed.
-	and PAD_UP | PAD_DOWN
-	ld a, b
-	jr nz, .notUpAndDown
-	or PAD_UP | PAD_DOWN
-	ld b, a
+    ; Filter impossible D-pad combinations, and treat them as if neither key was pressed.
+    and PAD_UP | PAD_DOWN
+    ld a, b
+    jr nz, .notUpAndDown
+    or PAD_UP | PAD_DOWN
+    ld b, a
 .notUpAndDown
-	and PAD_LEFT | PAD_RIGHT
-	jr nz, .notLeftAndRight
-	ld a, b
-	or PAD_LEFT | PAD_RIGHT
-	ld b, a
+    and PAD_LEFT | PAD_RIGHT
+    jr nz, .notLeftAndRight
+    ld a, b
+    or PAD_LEFT | PAD_RIGHT
+    ld b, a
 .notLeftAndRight
 
-	ld a, JOYP_GET_BUTTONS
-	call .readOneNibble
-	and PAD_START | PAD_SELECT | PAD_A | PAD_B
-	jr z, .perhapsReset
+    ld a, JOYP_GET_BUTTONS
+    call .readOneNibble
+    and PAD_START | PAD_SELECT | PAD_A | PAD_B
+    jr z, .perhapsReset
 .dontReset
-	or $F0 ; Set 4 upper bits (they are garbage otherwise).
+    or $F0 ; Set 4 upper bits (they are garbage otherwise).
 
-	; This `xor` instruction pulls double duty:
-	;   it both combines the two nibbles, *and* inverts all bits.
-	; Here's how: right now, A = 1111 SsBA
-	;                   and  B = DULR 1111
-	;   ...so each key bit will be XOR'd with a 1 bit, thus inverting it.
-	; Inverting is convenient: by default, a key being pressed sets its bit to 0;
-	;  inverting that makes buttons conform to the more common convention of `1 = pressed`.
-	xor b
-	ld b, a
+    ; This `xor` instruction pulls double duty:
+    ;   it both combines the two nibbles, *and* inverts all bits.
+    ; Here's how: right now, A = 1111 SsBA
+    ;                   and  B = DULR 1111
+    ;   ...so each key bit will be XOR'd with a 1 bit, thus inverting it.
+    ; Inverting is convenient: by default, a key being pressed sets its bit to 0;
+    ;  inverting that makes buttons conform to the more common convention of `1 = pressed`.
+    xor b
+    ld b, a
 
-	; Release joypad. (This is especially important on SGB.)
-	ld a, JOYP_GET_NONE
-	ldh [c], a
+    ; Release joypad. (This is especially important on SGB.)
+    ld a, JOYP_GET_NONE
+    ldh [c], a
 
-	; Compute the keys that have just been pressed: they are...
-	ldh a, [hHeldKeys]
-	cpl   ; ...the keys that *weren't* pressed last frame...
-	and b ; ...but are right now.
-	ldh [hPressedKeys], a
-	ld a, b
-	ldh [hHeldKeys], a
+    ; Compute the keys that have just been pressed: they are...
+    ldh a, [hHeldKeys]
+    cpl   ; ...the keys that *weren't* pressed last frame...
+    and b ; ...but are right now.
+    ldh [hPressedKeys], a
+    ld a, b
+    ldh [hHeldKeys], a
 
 
-	; As signalled by `hVBlankFlag` being non-zero, the caller is `WaitVBlank`, which is a function
-	;   that never returns on its own.
-	; Instead, this very VBlank handler will return to its caller; this is done by popping the stack
-	;   one extra time; the stack is currently:  SP->[       saved AF        ]
-	;                                                [somewhere in WaitVBlank]
-	;                                                [  WaitVBlank's caller  ]
-	;  ...then, after the following `pop af`:
-	;                                                [                       ]
-	;                                            SP->[somewhere in WaitVBlank]
-	;                                                [  WaitVBlank's caller  ]
-	;  ...then, after `.lagFrame`'s `pop af`:
-	;                                                [                       ]
-	;                                                [                       ]
-	;                                            SP->[  WaitVBlank's caller  ]
-	;  ...thus, `ret` will return to `WaitVBlank`'s caller.'
-	pop af
-	runtime_assert [@sp!] >= WaitVBlank && [@sp!] < WaitVBlank.end, "The VBlank flag must only be set by `WaitVBlank`!"
+    ; As signalled by `hVBlankFlag` being non-zero, the caller is `WaitVBlank`, which is a function
+    ;   that never returns on its own.
+    ; Instead, this very VBlank handler will return to its caller; this is done by popping the stack
+    ;   one extra time; the stack is currently:  SP->[       saved AF        ]
+    ;                                                [somewhere in WaitVBlank]
+    ;                                                [  WaitVBlank's caller  ]
+    ;  ...then, after the following `pop af`:
+    ;                                                [                       ]
+    ;                                            SP->[somewhere in WaitVBlank]
+    ;                                                [  WaitVBlank's caller  ]
+    ;  ...then, after `.lagFrame`'s `pop af`:
+    ;                                                [                       ]
+    ;                                                [                       ]
+    ;                                            SP->[  WaitVBlank's caller  ]
+    ;  ...thus, `ret` will return to `WaitVBlank`'s caller.'
+    pop af
+    runtime_assert [@sp!] >= WaitVBlank && [@sp!] < WaitVBlank.end, "The VBlank flag must only be set by `WaitVBlank`!"
 .lagFrame
-	pop af
-	ret
+    pop af
+    ret
 
 .readOneNibble
-	ldh [c], a ; Select the appropriate half of the buttons.
-	; We now need to wait a bit for the key matrix to settle; the following way to do so
-	; was come up with empirically, but has been shown to be reliable.
-	call .delay ; Burn 10 cycles calling a known `ret`.
-	ldh a, [c] ; A few extra reads appear to help the matrix settle...
-	ldh a, [c] ;
-	ldh a, [c] ; ...but only the last one's value can be trusted.
+    ldh [c], a ; Select the appropriate half of the buttons.
+    ; We now need to wait a bit for the key matrix to settle; the following way to do so
+    ; was come up with empirically, but has been shown to be reliable.
+    call .delay ; Burn 10 cycles calling a known `ret`.
+    ldh a, [c] ; A few extra reads appear to help the matrix settle...
+    ldh a, [c] ;
+    ldh a, [c] ; ...but only the last one's value can be trusted.
 .delay
-	ret
+    ret
 
 .perhapsReset
-	ldh a, [hCanSoftReset]
-	and a
-	jr z, .dontReset
-	jr Reset
+    ldh a, [hCanSoftReset]
+    and a
+    jr z, .dontReset
+    jr Reset
 
-	; This ensures the handler is right before the header, avoiding a gap.
-	; We do this also to ensure that `VBlankHandler` is in range of the `jr VBlankHandler`.
-	; As a bonus, it also ensures that `Reset` is in range for a `jr`, since it's right after the header.
-	align 16, $100
+    ; This ensures the handler is right before the header, avoiding a gap.
+    ; We do this also to ensure that `VBlankHandler` is in range of the `jr VBlankHandler`.
+    ; As a bonus, it also ensures that `Reset` is in range for a `jr`, since it's right after the header.
+    align 16, $100
+
+
+;SECTION "Sound Update", HRAM
+

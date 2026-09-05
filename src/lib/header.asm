@@ -25,6 +25,8 @@ SECTION "Header", ROM0[$100]
 
 EntryPoint:
     ldh [hConsoleType], a
+    xor a
+    ld [wShadowOAM], a
 
 Reset:: ; This is where the VBlank handler jumps to if Start+Select+B+A are all pressed together.
     di ; Disable interrupts while we set up.
@@ -59,6 +61,8 @@ Reset:: ; This is where the VBlank handler jumps to if Start+Select+B+A are all 
     ld [hBGP], a
     ld a, %11100100
     ld [hOBP0], a
+    ld a, %11100100
+    ld [hOBP1], a
 
     ; CGB palettes maybe, DMG ones always
 
@@ -73,6 +77,8 @@ Reset:: ; This is where the VBlank handler jumps to if Start+Select+B+A are all 
     ldh [hVBlankFlag], a
     ldh [hOAMHigh], a
     ldh [hCanSoftReset], a
+    ld a, 1
+    ldh [hSoundUpdate], a
     dec a ; ld a, $FF
     ldh [hHeldKeys], a
 
@@ -93,7 +99,8 @@ Reset:: ; This is where the VBlank handler jumps to if Start+Select+B+A are all 
     ; xor a
     ldh [hSCY], a
     ldh [hSCX], a
-    ld a, LCDC_ENABLE | LCDC_BG_ON | LCDC_OBJ_ON | LCDC_OBJ_16
+    ;ld a, LCDC_ENABLE | LCDC_BG_ON | LCDC_OBJ_ON | LCDC_OBJ_16
+    ld a, LCDC_ENABLE | LCDC_BG_ON
     ldh [hLCDC], a
     ; And turn the LCD on!
     ldh [rLCDC], a
