@@ -96,9 +96,18 @@ UpdateGameplay::
     call WaitVBlank
     call rand
 
+    ; if not inside VBlank, continue without printing the score.
+    ld a, [rLY]
+    cp 144
+    jp c, .printScoreEnd
+
+.printScore
+
     ld hl, wScore
     ld de, $9C00 + 10
     call PrintScore
+
+.printScoreEnd
 
     call ClearShadowOAM
 
