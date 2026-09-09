@@ -19,6 +19,8 @@ Intro::
     ; Initializing hUGEDriver
     ld hl, race_song
     call hUGE_init
+    ld a, 1
+    ld [hSoundUpdate], a
 
     call InitGameStateMachine
     call GameStateManager

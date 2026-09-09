@@ -77,9 +77,9 @@ Reset:: ; This is where the VBlank handler jumps to if Start+Select+B+A are all 
     ldh [hVBlankFlag], a
     ldh [hOAMHigh], a
     ldh [hCanSoftReset], a
-    ld a, 1
+    ld a, 0
     ldh [hSoundUpdate], a
-    dec a ; ld a, $FF
+    ld a, $FF
     ldh [hHeldKeys], a
 
     ; Load the correct ROM bank for later.
