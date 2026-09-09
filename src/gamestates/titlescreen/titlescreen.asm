@@ -68,9 +68,9 @@ UpdateTitleScreen::
     
     call ClearShadowOAM
 
-    ; Check if start button was pressed
+    ; Check if we should start the game
     ldh a, [hPressedKeys]
-    and PAD_START
+    and PAD_START | PAD_A | PAD_B
     jp z, .exitTitleScreenEnd
 
     .exitTitleScreen:

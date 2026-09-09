@@ -80,6 +80,8 @@ InitGameplay::
     ld [randstate + 2], a
     ld [randstate + 3], a
 
+    ld [wIsPaused], a
+
     call InitPlayer
     call InitEnemies
     
@@ -95,6 +97,33 @@ UpdateGameplay::
     
     call WaitVBlank
     call rand
+
+    ; Check if game should be paused
+    ldh a, [hPressedKeys]
+    and PAD_START
+    jp z, .pauseGameEnd
+
+.pauseGame
+
+    ld a, [wIsPaused]
+    cp 0
+    jp z, .pause
+
+    xor a
+    ld [wIsPaused], a
+    jp .pauseGameEnd
+
+.pause
+
+    ld a, 1
+    ld [wIsPaused], a
+
+.pauseGameEnd
+    
+    ; Check if game is paused. If so, go back to the start of the loop
+    ld a, [wIsPaused]
+    cp 1
+    jp z, UpdateGameplay
 
     ; if not inside VBlank, continue without printing the score.
     ld a, [rLY]
@@ -158,6 +187,8 @@ wScore:: ds 6
 wScoreTick: db
 
 wScoreTickTime:: db
+
+wIsPaused: db
 
 
 SECTION "Racing Track Graphics", ROM0
