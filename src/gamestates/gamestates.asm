@@ -29,10 +29,10 @@ InitGameStateMachine::
     xor a
     ld [sHiScore], a
     ld [sHiScore + 1], a
-    ld a, 2
     ld [sHiScore + 2], a
-    xor a
+    ld a, 5
     ld [sHiScore + 3], a
+    xor a
     ld [sHiScore + 4], a
     ld [sHiScore + 5], a
 

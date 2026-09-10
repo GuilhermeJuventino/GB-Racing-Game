@@ -20,12 +20,21 @@ InitEnemies::
     ld bc, EnemySpriteEnd - EnemySprite
     call LCDMemcpy
 
+    ld a, 230
+    ld [wEnemyFractionalSpeed], a
+
+    ld a, 2
+    ld [wEnemySpeed], a
+
+    ld a, 5
+    ld [wMaxEnemiesToSpawn], a
+
     xor a
     ld [wEnemyIndex], a ; Index for loop
  
     ld de, wEnemies0
 
-    ld a, 7
+    ld a, 19
     ld [wEnemiesLen], a
 
     .initLoop:
@@ -242,11 +251,11 @@ RollEnemyPosition:
 
 
 SetSpawnTimer:
-    def MIN_DELAY equ 16
-    def MAX_DELAY equ 64
+    def MIN_DELAY equ 14
+    def MAX_DELAY equ 24
 
     def RANGE_DELAY equ MAX_DELAY - MIN_DELAY
-    def MODULO_DELAY equ 48
+    def MODULO_DELAY equ 10
 
 .roll:
     call rand
@@ -292,7 +301,7 @@ EnemySpawner:
     ld hl, sizeof_Enemy
     add hl, de
     
-    ld a, [wEnemiesLen]
+    ld a, [wMaxEnemiesToSpawn]
     ld b, a
 
     ld a, [wEnemyIndex]
@@ -424,21 +433,26 @@ MoveEnemies:
 
 .resetPositionEnd:
     dec hl
-    
+    push bc
+    ld a, [wEnemyFractionalSpeed]
+    ld b, a
     ld a, [hl]
-    add a, 220
+    add a, b
     ld [hl], a ; Increasing wEnemy[i].FractionalY
     jr nc, .skipCarry
 
     inc hl
+    ld a, [wEnemySpeed]
+    ld b, a
     ld a, [hl]
-
-    inc a
+    
+    add a, b
     ld [hl], a ; Incrementing wEnemies[i].y position
     
     dec hl
 
 .skipCarry:
+    pop bc
     ; Moving to next entry in wEnemies
     ld d, h
     ld e, l
@@ -489,10 +503,13 @@ SECTION "EnemyVariables", WRAM0
 wXPos: db
 wSpawnDelay: db
 wEnemyIndex:: db
+wMaxEnemiesToSpawn:: db
+wEnemyFractionalSpeed:: db
+wEnemySpeed:: db
 
 def STRUCTS_EXPORT_CONSTANTS equ 1
 
-dstructs 7, Enemy, wEnemies
+dstructs 19, Enemy, wEnemies
 
 wEnemiesLen:: db
 

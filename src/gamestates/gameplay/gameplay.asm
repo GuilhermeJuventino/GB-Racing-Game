@@ -74,6 +74,9 @@ InitGameplay::
     ld [wScoreTick], a
     ld [wScoreTickTime], a
 
+    ld a, 3
+    ld [wScrollSpeed], a
+
     xor a
     ld [randstate], a
     ld [randstate + 1], a
@@ -81,6 +84,8 @@ InitGameplay::
     ld [randstate + 3], a
 
     ld [wIsPaused], a
+
+    ld [wLevel], a
 
     call InitPlayer
     call InitEnemies
@@ -151,12 +156,15 @@ UpdateGameplay::
     .exitGameplayEnd:
     
     ; Scrolling the Background vertically
+    ld a, [wScrollSpeed]
+    ld b, a
     ld a, [hSCY]
-    sub 2
+    sub a, b
     ld [hSCY], a
 
     call UpdatePlayer
     call UpdateEnemies
+    call AdjustDifficulty
 
     ld hl, wScore + 5
     ld de, wScoreTick
@@ -170,6 +178,95 @@ UpdateGameplay::
     ld [randstate], a
 
     jp UpdateGameplay
+
+
+AdjustDifficulty:
+    ; 100 pts
+    ld a, [wScore + 3]
+
+    cp 1
+    jp nz, .level2End
+
+.level2
+
+    ld a, [wLevel]
+    cp 2
+    ret nc
+
+    ld a, 6
+    ld [wMaxEnemiesToSpawn], a
+
+    ld a, 2
+    ld [wLevel], a
+
+    ret
+
+.level2End
+    
+    ; 200 pts
+    ld a, [wScore + 3]
+
+    cp 2
+    jp nz, .level3End
+
+.level3
+
+    ld a, [wLevel]
+    cp 3
+    ret nc
+
+    ld a, 7
+    ld [wMaxEnemiesToSpawn], a
+
+    ld a, 3
+    ld [wLevel], a
+    
+    ret
+
+.level3End
+    
+    ; 300 pts
+    ld a, [wScore + 3]
+
+    cp 3
+    jp nz, .level4End
+
+.level4
+
+    ld a, [wLevel]
+    cp 4
+    ret nc
+
+    ld a, 8
+    ld [wMaxEnemiesToSpawn], a
+
+    ld a, 4
+    ld [wLevel], a
+
+    ret
+
+.level4End
+    ; 500 pts
+    ld a, [wScore + 3]
+
+    cp 5
+    jp nz, .level5End
+
+.level5
+
+    ld a, [wLevel]
+    cp 5
+    ret nc
+
+    ld a, 12
+    ld [wMaxEnemiesToSpawn], a
+
+    ld a, 5
+    ld [wLevel], a
+
+.level5End
+
+    ret
 
 
 SECTION "Gameplay Variables", WRAM0
@@ -189,6 +286,10 @@ wScoreTick: db
 wScoreTickTime:: db
 
 wIsPaused: db
+
+wScrollSpeed: db
+
+wLevel:: db
 
 
 SECTION "Racing Track Graphics", ROM0
