@@ -10,7 +10,7 @@ ClearShadowOAM::
 .clearShadowOAMLoop
     ld [hli], a
     dec b
-    jp nz, .clearShadowOAMLoop
+    jr nz, .clearShadowOAMLoop
     
     ret
 
