@@ -93,23 +93,6 @@ VBlankHandler:
     ; VRAM accesses (can't screw up timing), etc
     ei
 
-    ; save context
-    push bc
-    push de
-    push hl
-
-    ; check if sound should be updated
-    ldh a, [hSoundUpdate]
-    and a
-    jr z, .no_init
-    ;call hUGE_dosound
-
-.no_init
-    ; restore context
-    pop hl
-    pop de
-    pop bc
-
     ldh a, [hVBlankFlag]
     and a
     jr z, .lagFrame

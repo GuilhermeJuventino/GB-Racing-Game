@@ -63,19 +63,19 @@ InitGameplay::
     ; Initializing state flag variables
     ld [wShouldExitGameplayState], a
     
-    ldh [wScore], a
-    ldh [wScore + 1], a
-    ldh [wScore + 2], a
-    ldh [wScore + 3], a
-    ldh [wScore + 4], a
-    ldh [wScore + 5], a
+    ldh [hScore], a
+    ldh [hScore + 1], a
+    ldh [hScore + 2], a
+    ldh [hScore + 3], a
+    ldh [hScore + 4], a
+    ldh [hScore + 5], a
 
     ld a, 8
-    ldh [wScoreTick], a
-    ldh [wScoreTickTime], a
+    ldh [hScoreTick], a
+    ldh [hScoreTickTime], a
 
     ld a, 3
-    ldh [wScrollSpeed], a
+    ldh [hScrollSpeed], a
 
     xor a
     ld [randstate], a
@@ -83,9 +83,9 @@ InitGameplay::
     ld [randstate + 2], a
     ld [randstate + 3], a
 
-    ldh [wIsPaused], a
+    ldh [hIsPaused], a
 
-    ldh [wLevel], a
+    ldh [hLevel], a
 
     call InitPlayer
     call InitEnemies
@@ -110,38 +110,29 @@ UpdateGameplay::
 
 .pauseGame
 
-    ldh a, [wIsPaused]
+    ldh a, [hIsPaused]
     or a
     jr z, .pause
 
     xor a
-    ldh [wIsPaused], a
+    ldh [hIsPaused], a
     jr .pauseGameEnd
 
 .pause
 
     ld a, 1
-    ldh [wIsPaused], a
+    ldh [hIsPaused], a
 
 .pauseGameEnd
     
     ; Check if game is paused. If so, go back to the start of the loop
-    ldh a, [wIsPaused]
+    ldh a, [hIsPaused]
     cp 1
     jr z, UpdateGameplay
 
-    ; if not inside VBlank, continue without printing the score.
-    ;ld a, [rLY]
-    ;cp 144
-    ;jr c, .printScoreEnd
-
-;.printScore
-
-    ld hl, wScore
+    ld hl, hScore
     ld de, $9C00 + 10
     call PrintScore
-
-;.printScoreEnd
 
     call ClearShadowOAM
 
@@ -156,7 +147,7 @@ UpdateGameplay::
     .exitGameplayEnd:
     
     ; Scrolling the Background vertically
-    ldh a, [wScrollSpeed]
+    ldh a, [hScrollSpeed]
     ld b, a
     ldh a, [hSCY]
     sub a, b
@@ -166,8 +157,8 @@ UpdateGameplay::
     call UpdateEnemies
     call AdjustDifficulty
 
-    ld hl, wScore + 5
-    ld de, wScoreTick
+    ld hl, hScore + 5
+    ld de, hScoreTick
     call IncrementScore
 
     ; Start OAM DMA transfer
@@ -176,94 +167,110 @@ UpdateGameplay::
 
     ldh a, [rDIV]
     ld [randstate], a
+
+    ; save context
+    push bc
+    push de
+    push hl
+
+    ; check if sound should be updated
+    ldh a, [hSoundUpdate]
+    and a
+    jr z, .no_init
     call hUGE_dosound
+
+.no_init
+    ; restore context
+    pop hl
+    pop de
+    pop bc
 
     jr UpdateGameplay
 
 
 AdjustDifficulty:
     ; 100 pts
-    ldh a, [wScore + 3]
+    ldh a, [hScore + 3]
 
     cp 1
     jr nz, .level2End
 
 .level2
 
-    ldh a, [wLevel]
+    ldh a, [hLevel]
     cp 2
     ret nc
 
     ld a, 6
-    ld [wMaxEnemiesToSpawn], a
+    ldh [hMaxEnemiesToSpawn], a
 
     ld a, 2
-    ldh [wLevel], a
+    ldh [hLevel], a
 
     ret
 
 .level2End
     
     ; 200 pts
-    ldh a, [wScore + 3]
+    ldh a, [hScore + 3]
 
     cp 2
     jr nz, .level3End
 
 .level3
 
-    ldh a, [wLevel]
+    ldh a, [hLevel]
     cp 3
     ret nc
 
     ld a, 7
-    ld [wMaxEnemiesToSpawn], a
+    ldh [hMaxEnemiesToSpawn], a
 
     ld a, 3
-    ldh [wLevel], a
+    ldh [hLevel], a
     
     ret
 
 .level3End
     
     ; 300 pts
-    ldh a, [wScore + 3]
+    ldh a, [hScore + 3]
 
     cp 3
     jr nz, .level4End
 
 .level4
 
-    ldh a, [wLevel]
+    ldh a, [hLevel]
     cp 4
     ret nc
 
     ld a, 8
-    ld [wMaxEnemiesToSpawn], a
+    ldh [hMaxEnemiesToSpawn], a
 
     ld a, 4
-    ldh [wLevel], a
+    ldh [hLevel], a
 
     ret
 
 .level4End
     ; 500 pts
-    ldh a, [wScore + 3]
+    ldh a, [hScore + 3]
 
     cp 5
     jr nz, .level5End
 
 .level5
 
-    ldh a, [wLevel]
+    ldh a, [hLevel]
     cp 5
     ret nc
 
     ld a, 12
-    ld [wMaxEnemiesToSpawn], a
+    ldh [hMaxEnemiesToSpawn], a
 
     ld a, 5
-    ldh [wLevel], a
+    ldh [hLevel], a
 
 .level5End
 
@@ -283,17 +290,17 @@ wShouldExitGameplayState:: db
 SECTION "Gameplay HRAM", HRAM
 
 ; Player Score
-wScore:: ds 6
+hScore:: ds 6
 
-wScoreTick: db
+hScoreTick: db
 
-wScoreTickTime:: db
+hScoreTickTime:: db
 
-wIsPaused: db
+hIsPaused: db
 
-wScrollSpeed: db
+hScrollSpeed: db
 
-wLevel:: db
+hLevel:: db
 
 
 SECTION "Racing Track Graphics", ROM0

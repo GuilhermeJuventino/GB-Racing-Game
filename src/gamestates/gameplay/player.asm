@@ -170,7 +170,7 @@ CheckPlayerTileCollision:
 ; collided with any of the enemies
 CheckPlayerSpriteCollision:
     xor a
-    ld [wEnemyIndex], a
+    ldh [hEnemyIndex], a
 
     ld de, wEnemies0
 
@@ -187,12 +187,12 @@ CheckPlayerSpriteCollision:
     ld d, h
     ld e, l
     
-    ld a, [wEnemiesLen]
+    ldh a, [hEnemiesLen]
     ld b, a
 
-    ld a, [wEnemyIndex]
+    ldh a, [hEnemyIndex]
     inc a
-    ld [wEnemyIndex], a
+    ldh [hEnemyIndex], a
 
     cp a, b
     jr c, .loop

@@ -21,30 +21,30 @@ InitEnemies::
     call LCDMemcpy
 
     ld a, 230
-    ldh [wEnemyFractionalSpeed], a
+    ldh [hEnemyFractionalSpeed], a
 
     ld a, 2
-    ldh [wEnemySpeed], a
+    ldh [hEnemySpeed], a
 
     ld a, 5
-    ldh [wMaxEnemiesToSpawn], a
+    ldh [hMaxEnemiesToSpawn], a
 
     xor a
-    ldh [wEnemyIndex], a ; Index for loop
+    ldh [hEnemyIndex], a ; Index for loop
  
     ld de, wEnemies0
 
     ld a, 19
-    ldh [wEnemiesLen], a
+    ldh [hEnemiesLen], a
 
     .initLoop:
         call InitEnemy
-        ldh a, [wEnemiesLen]
+        ldh a, [hEnemiesLen]
         ld b, a
 
-        ldh a, [wEnemyIndex]
+        ldh a, [hEnemyIndex]
         inc a
-        ldh [wEnemyIndex], a
+        ldh [hEnemyIndex], a
 
         cp a, b
         jr c, .initLoop
@@ -102,7 +102,7 @@ InitEnemy:
 SetEnemySprite: 
     ld de, wEnemies0
     xor a
-    ldh [wEnemyIndex], a ; Index for loop
+    ldh [hEnemyIndex], a ; Index for loop
 
     .setSpriteLoop:
         ; Left Metasprite
@@ -215,19 +215,19 @@ SetEnemySprite:
         ld l, c
         
         ; Incrementing Loop Index
-        ldh a, [wEnemiesLen]
+        ldh a, [hEnemiesLen]
         ld b, a
 
-        ldh a, [wEnemyIndex]
+        ldh a, [hEnemyIndex]
         inc a
-        ldh [wEnemyIndex], a
+        ldh [hEnemyIndex], a
 
         cp a, b
         jr c, .setSpriteLoop
     .setSpriteLoopEnd:
     
     xor a
-    ldh [wEnemyIndex], a
+    ldh [hEnemyIndex], a
 
     ret
 
@@ -277,7 +277,7 @@ EnemySpawner:
 
     ld hl, wEnemies0
     xor a
-    ldh [wEnemyIndex], a
+    ldh [hEnemyIndex], a
     
 .loop:
     ld de, 5
@@ -301,12 +301,12 @@ EnemySpawner:
     ld hl, sizeof_Enemy
     add hl, de
     
-    ldh a, [wMaxEnemiesToSpawn]
+    ldh a, [hMaxEnemiesToSpawn]
     ld b, a
 
-    ldh a, [wEnemyIndex]
+    ldh a, [hEnemyIndex]
     inc a
-    ldh [wEnemyIndex], a
+    ldh [hEnemyIndex], a
     
     cp a, b
     jr c, .loop
@@ -343,7 +343,7 @@ EnemySpawner:
 MoveEnemies:
     ld hl, wEnemies0
     xor a
-    ldh [wEnemyIndex], a ; Loop index
+    ldh [hEnemyIndex], a ; Loop index
 
 .loop:
     ld bc, sizeof_Enemy
@@ -371,12 +371,12 @@ MoveEnemies:
 
     add hl, de
     
-    ldh a, [wEnemiesLen]
+    ldh a, [hEnemiesLen]
     ld b, a
 
-    ldh a, [wEnemyIndex]
+    ldh a, [hEnemyIndex]
     inc a
-    ldh [wEnemyIndex], a
+    ldh [hEnemyIndex], a
     
     cp a, b
     jr c, .loop
@@ -419,12 +419,12 @@ MoveEnemies:
 
     add hl, de
     
-    ldh a, [wEnemiesLen]
+    ldh a, [hEnemiesLen]
     ld b, a
 
-    ldh a, [wEnemyIndex]
+    ldh a, [hEnemyIndex]
     inc a
-    ldh [wEnemyIndex], a
+    ldh [hEnemyIndex], a
 
     cp a, b
     jr c, .loop
@@ -434,7 +434,7 @@ MoveEnemies:
 .resetPositionEnd:
     dec hl
     push bc
-    ldh a, [wEnemyFractionalSpeed]
+    ldh a, [hEnemyFractionalSpeed]
     ld b, a
     ld a, [hl]
     add a, b
@@ -442,7 +442,7 @@ MoveEnemies:
     jr nc, .skipCarry
 
     inc hl
-    ldh a, [wEnemySpeed]
+    ldh a, [hEnemySpeed]
     ld b, a
     ld a, [hl]
     
@@ -462,12 +462,12 @@ MoveEnemies:
 
     add hl, de
     
-    ldh a, [wEnemiesLen]
+    ldh a, [hEnemiesLen]
     ld b, a
 
-    ldh a, [wEnemyIndex]
+    ldh a, [hEnemyIndex]
     inc a
-    ldh [wEnemyIndex], a
+    ldh [hEnemyIndex], a
 
     cp a, b
     jr c, .loop 
@@ -510,9 +510,9 @@ wSpawnDelay: db
 
 SECTION "Enemy HRAM", HRAM
 
-wEnemyIndex:: db
-wMaxEnemiesToSpawn:: db
-wEnemyFractionalSpeed:: db
-wEnemySpeed:: db
-wEnemiesLen:: db
+hEnemyIndex:: db
+hMaxEnemiesToSpawn:: db
+hEnemyFractionalSpeed:: db
+hEnemySpeed:: db
+hEnemiesLen:: db
 

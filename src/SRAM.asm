@@ -41,7 +41,7 @@ ValidateChecksum::
 ; return a: 1 if a new high score was set, otherwise, return 0
 CompareScores::
     ld de, sHiScore
-    ld hl, wScore
+    ld hl, hScore
     ld c, sHiScoreEnd - sHiScore
 
 .loop

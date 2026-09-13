@@ -155,7 +155,7 @@ IncrementScore::
 
 .loopEnd
     ; Reset score tick timer and return
-    ld a, [wScoreTickTime]
+    ld a, [hScoreTickTime]
     ld [de], a
 
     ret

@@ -82,7 +82,23 @@ UpdateTitleScreen::
     ; Start OAM DMA transfer
     ld a, HIGH(wShadowOAM)
     ldh [hOAMHigh], a
+
+    ; save context
+    push bc
+    push de
+    push hl
+
+    ; check if sound should be updated
+    ldh a, [hSoundUpdate]
+    and a
+    jr z, .no_init
     call hUGE_dosound
+
+.no_init
+    ; restore context
+    pop hl
+    pop de
+    pop bc
 
     jr UpdateTitleScreen
 

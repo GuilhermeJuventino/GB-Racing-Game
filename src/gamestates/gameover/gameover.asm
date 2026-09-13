@@ -33,7 +33,7 @@ InitGameOver::
     call PrintText
     
     ; Printing score
-    ld hl, wScore
+    ld hl, hScore
     ld de, $9800 + 12 + 9 * 32
     call PrintScore
 
@@ -56,7 +56,7 @@ InitGameOver::
     ld bc, sChecksumEnd - sChecksum
     call Memcpy
 
-    ld de, wScore
+    ld de, hScore
     ld hl, sHiScore
     ld bc, sHiScoreEnd - sHiScore
     call Memcpy
@@ -113,7 +113,22 @@ UpdateGameOver::
     ld a, HIGH(wShadowOAM)
     ldh [hOAMHigh], a
 
+    ; save context
+    push bc
+    push de
+    push hl
+
+    ; check if sound should be updated
+    ldh a, [hSoundUpdate]
+    and a
+    jr z, .no_init
     call hUGE_dosound
+
+.no_init
+    ; restore context
+    pop hl
+    pop de
+    pop bc
 
     jr UpdateGameOver
 
