@@ -7,9 +7,9 @@ InitTitleScreen::
     
 
 .loop
-    ld a, [rLY]
+    ldh a, [rLY]
     cp 144
-    jp c, .loop
+    jr c, .loop
 
     ; Turning LCD and OBJ Layer off to load title screen assets
     ld a, LCDC_OFF | LCDC_BG_OFF | LCDC_WIN_OFF | LCDC_OBJ_OFF | LCDC_OBJ_16
@@ -29,8 +29,8 @@ InitTitleScreen::
 
     ; Reset Background Scroll position
     xor a
-    ld [hSCX], a
-    ld [hSCY], a
+    ldh [hSCX], a
+    ldh [hSCY], a
  
     ; Printing title screen text 
     ld de, $9800 + 5 + 12 * 32
@@ -60,9 +60,9 @@ InitTitleScreen::
 
 
 UpdateTitleScreen::
-    ld a, [rLY]
+    ldh a, [rLY]
     cp 144
-    jp nc, UpdateTitleScreen
+    jr nc, UpdateTitleScreen
 
     call WaitVBlank
     
@@ -71,7 +71,7 @@ UpdateTitleScreen::
     ; Check if we should start the game
     ldh a, [hPressedKeys]
     and PAD_START | PAD_A | PAD_B
-    jp z, .exitTitleScreenEnd
+    jr z, .exitTitleScreenEnd
 
     .exitTitleScreen:
         ld a, 1 ; Exiting to gameplay state
@@ -83,7 +83,7 @@ UpdateTitleScreen::
     ld a, HIGH(wShadowOAM)
     ldh [hOAMHigh], a
 
-    jp UpdateTitleScreen
+    jr UpdateTitleScreen
 
 
 SECTION "Title Screen Graphics", ROM0

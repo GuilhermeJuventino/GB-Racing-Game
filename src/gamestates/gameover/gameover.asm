@@ -7,9 +7,9 @@ InitGameOver::
     
 
 .loop
-    ld a, [rLY]
+    ldh a, [rLY]
     cp 144
-    jp c, .loop
+    jr c, .loop
 
     ; Turning LCD and OBJ Layer off to load title screen assets
     ld a, LCDC_OFF | LCDC_BG_OFF | LCDC_WIN_OFF | LCDC_OBJ_OFF | LCDC_OBJ_16
@@ -48,7 +48,7 @@ InitGameOver::
     ;
     call CompareScores
     cp a, 1
-    jp nz, .newHighScoreEnd
+    jr nz, .newHighScoreEnd
 
 .newHighScore 
     ld de, rChecksumBytes
@@ -78,8 +78,8 @@ InitGameOver::
 
     ; Reset Background Scroll position
     xor a
-    ld [hSCX], a
-    ld [hSCY], a
+    ldh [hSCX], a
+    ldh [hSCY], a
     
     ; Turning LCD back on
     ld a, LCDC_ON | LCDC_BG_ON | LCDC_WIN_OFF | LCDC_OBJ_OFF | LCDC_OBJ_16
@@ -90,9 +90,9 @@ InitGameOver::
 
 
 UpdateGameOver::
-    ld a, [rLY]
+    ldh a, [rLY]
     cp 144
-    jp nc, UpdateGameOver
+    jr nc, UpdateGameOver
 
     call WaitVBlank
     
@@ -101,7 +101,7 @@ UpdateGameOver::
     ; Check if we should start the game again
     ldh a, [hPressedKeys]
     and PAD_START | PAD_A | PAD_B
-    jp z, .exitGameOverEnd
+    jr z, .exitGameOverEnd
 
     .exitGameOver:
         ld a, 1 ; Exiting to gameplay state
@@ -113,5 +113,5 @@ UpdateGameOver::
     ld a, HIGH(wShadowOAM)
     ldh [hOAMHigh], a
 
-    jp UpdateGameOver
+    jr UpdateGameOver
 

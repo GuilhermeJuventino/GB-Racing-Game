@@ -101,7 +101,7 @@ CheckPlayerInput:
 .checkKeyLeft
     ld a, [hHeldKeys]
     and a, PAD_LEFT
-    jp z, .checkKeyRight
+    jr z, .checkKeyRight
 
 .moveLeft
     ld a, [wPlayer_x]
@@ -135,7 +135,7 @@ CheckPlayerTileCollision:
 
     ld a, [hl]
     cp a, $04
-    jp nz, .collideWithLeftBoundaryEnd
+    jr nz, .collideWithLeftBoundaryEnd
 
     .collideWithLeftBoundary
         ld a, [wPlayer_x]
@@ -155,7 +155,7 @@ CheckPlayerTileCollision:
 
     ld a, [hl]
     cp a, $08
-    jp nz, .collideWithRightBoundaryEnd
+    jr nz, .collideWithRightBoundaryEnd
 
     .collideWithRightBoundary
         ld a, [wPlayer_x]
@@ -179,7 +179,7 @@ CheckPlayerSpriteCollision:
 
     ld a, 0
     cp a, c
-    jp nz, .collisionFound
+    jr nz, .collisionFound
     
 
     ld hl, sizeof_wEnemies0
@@ -197,7 +197,7 @@ CheckPlayerSpriteCollision:
     cp a, b
     jp c, .loop
 
-    jp .collisionFoundEnd
+    jr .collisionFoundEnd
 
 .collisionFound
     call KillPlayer

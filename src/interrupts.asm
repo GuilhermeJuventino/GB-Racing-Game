@@ -32,7 +32,7 @@ EnableSTATInterrupts::
     ; Starting with the first scanline,
     ; The first STAT interrupt to be called when rLY = 0
     xor a
-    ld [rLYC], a
+    ldh [rLYC], a
 
     ret
 
@@ -46,7 +46,7 @@ StatInterrupt:
     ; Checking if we're on the first scanline
     ldh a, [rLY]
     and a
-    jp z, .LYIsZero
+    jr z, .LYIsZero
 
 .LYIs135:
     ; Don't call next STAT interrupt until scanline 0
@@ -58,7 +58,7 @@ StatInterrupt:
     ldh [hLCDC], a
     ldh [rLCDC], a
 
-    jp StatInterruptEnd
+    jr StatInterruptEnd
 
 .LYIsZero:
     ; Don't call next STAT interrupt until scanline 135

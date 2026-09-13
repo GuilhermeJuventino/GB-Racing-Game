@@ -52,7 +52,7 @@ PrintText::
     inc de
     inc hl
 
-    jp .loop
+    jr .loop
 
 
 ; Print the Score or High Score to the specified tilemap at the specified coordinates
@@ -79,7 +79,7 @@ PrintScore::
     ; Increase which digit we are drawing to
     inc de
 
-    jp .loop
+    jr .loop
 
 
 ; Increment the Score after the score tick timer reaches zero
@@ -90,7 +90,7 @@ IncrementScore::
     ; Check if score tick timer has reached zero, if not, decrement timer and return
     ld a, [de]
     cp 0
-    jp z, .tickEnd
+    jr z, .tickEnd
 
 .tick
     ; Decrement tick timer and return
@@ -116,7 +116,7 @@ IncrementScore::
     ld a, c
 
     cp 6
-    jp nz, .capAt999999End ; Check if loop counter has not gone over the score bounds (return if so)
+    jr nz, .capAt999999End ; Check if loop counter has not gone over the score bounds (return if so)
     
 
 .capAt999999

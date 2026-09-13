@@ -47,7 +47,7 @@ InitEnemies::
         ld [wEnemyIndex], a
 
         cp a, b
-        jp c, .initLoop
+        jr c, .initLoop
     .initLoopEnd:
     
     ld a, [wEnemies0]
@@ -285,7 +285,7 @@ EnemySpawner:
     
     ld a, [hl]
     cp a, 1
-    jp nz, .skipIndexEnd ; Checking if current enemy is not active
+    jr nz, .skipIndexEnd ; Checking if current enemy is not active
 
 .skipIndex:
     ; Moving to next entry in wEnemies
@@ -353,7 +353,7 @@ MoveEnemies:
 
     ld a, [hl]
     cp 0
-    jp nz, .skipIndexEnd ; Checking if wEnemies0[i].active is not zero
+    jr nz, .skipIndexEnd ; Checking if wEnemies0[i].active is not zero
 
 .skipIndex:
     ; Moving to next entry in wEneies
@@ -391,7 +391,7 @@ MoveEnemies:
 
     ld a, [hl]
     cp $A2
-    jp c, .resetPositionEnd ; Check if current Enemy's Y position is beneath the screen limit
+    jr c, .resetPositionEnd ; Check if current Enemy's Y position is beneath the screen limit
 
 .resetPosition:
     xor a

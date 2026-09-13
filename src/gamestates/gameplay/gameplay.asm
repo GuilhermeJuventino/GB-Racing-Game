@@ -7,9 +7,9 @@ InitGameplay::
     
 
 .loop
-    ld a, [rLY]
+    ldh a, [rLY]
     cp 144
-    jp c, .loop
+    jr c, .loop
 
     ; Turning LCD, Window and OBJ Layer off to load gameplay assets
     ld a, LCDC_OFF | LCDC_BG_OFF | LCDC_WIN_OFF | LCDC_OBJ_OFF
@@ -44,15 +44,15 @@ InitGameplay::
     
     ; Reset Background Scroll position
     xor a
-    ld [hSCX], a
-    ld [hSCY], a
+    ldh [hSCX], a
+    ldh [hSCY], a
     
     ; Setting Window layer's position
     ld a, 7
-    ld [rWX], a
+    ldh [rWX], a
 
     ld a, 135
-    ld [rWY], a
+    ldh [rWY], a
     
     ; Turning LCD, Window and OBJ Layer back on
     ld a, LCDC_ON | LCDC_BG_ON | LCDC_WIN_ON | LCDC_WIN_9C00 | LCDC_OBJ_ON | LCDC_OBJ_16
@@ -96,9 +96,9 @@ InitGameplay::
 
 
 UpdateGameplay::
-    ld a, [rLY]
+    ldh a, [rLY]
     cp 144
-    jp nc, UpdateGameplay
+    jr nc, UpdateGameplay
     
     call WaitVBlank
     call rand
@@ -106,7 +106,7 @@ UpdateGameplay::
     ; Check if game should be paused
     ldh a, [hPressedKeys]
     and PAD_START
-    jp z, .pauseGameEnd
+    jr z, .pauseGameEnd
 
 .pauseGame
 
@@ -116,7 +116,7 @@ UpdateGameplay::
 
     xor a
     ld [wIsPaused], a
-    jp .pauseGameEnd
+    jr .pauseGameEnd
 
 .pause
 
@@ -128,12 +128,12 @@ UpdateGameplay::
     ; Check if game is paused. If so, go back to the start of the loop
     ld a, [wIsPaused]
     cp 1
-    jp z, UpdateGameplay
+    jr z, UpdateGameplay
 
     ; if not inside VBlank, continue without printing the score.
     ld a, [rLY]
     cp 144
-    jp c, .printScoreEnd
+    jr c, .printScoreEnd
 
 .printScore
 
@@ -147,7 +147,7 @@ UpdateGameplay::
 
     ld a, [wShouldExitGameplayState]
     cp 1
-    jp nz, .exitGameplayEnd
+    jr nz, .exitGameplayEnd
 
     .exitGameplay:
         ld a, 2 ; Exiting to game over state
@@ -158,9 +158,9 @@ UpdateGameplay::
     ; Scrolling the Background vertically
     ld a, [wScrollSpeed]
     ld b, a
-    ld a, [hSCY]
+    ldh a, [hSCY]
     sub a, b
-    ld [hSCY], a
+    ldh [hSCY], a
 
     call UpdatePlayer
     call UpdateEnemies
@@ -185,7 +185,7 @@ AdjustDifficulty:
     ld a, [wScore + 3]
 
     cp 1
-    jp nz, .level2End
+    jr nz, .level2End
 
 .level2
 
@@ -207,7 +207,7 @@ AdjustDifficulty:
     ld a, [wScore + 3]
 
     cp 2
-    jp nz, .level3End
+    jr nz, .level3End
 
 .level3
 
@@ -229,7 +229,7 @@ AdjustDifficulty:
     ld a, [wScore + 3]
 
     cp 3
-    jp nz, .level4End
+    jr nz, .level4End
 
 .level4
 
@@ -250,7 +250,7 @@ AdjustDifficulty:
     ld a, [wScore + 3]
 
     cp 5
-    jp nz, .level5End
+    jr nz, .level5End
 
 .level5
 
