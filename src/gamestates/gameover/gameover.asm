@@ -113,5 +113,7 @@ UpdateGameOver::
     ld a, HIGH(wShadowOAM)
     ldh [hOAMHigh], a
 
+    call hUGE_dosound
+
     jr UpdateGameOver
 

@@ -82,6 +82,7 @@ UpdateTitleScreen::
     ; Start OAM DMA transfer
     ld a, HIGH(wShadowOAM)
     ldh [hOAMHigh], a
+    call hUGE_dosound
 
     jr UpdateTitleScreen
 

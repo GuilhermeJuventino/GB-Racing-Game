@@ -102,7 +102,7 @@ VBlankHandler:
     ldh a, [hSoundUpdate]
     and a
     jr z, .no_init
-    call hUGE_dosound
+    ;call hUGE_dosound
 
 .no_init
     ; restore context

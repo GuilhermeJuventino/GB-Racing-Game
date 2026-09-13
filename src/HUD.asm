@@ -110,7 +110,7 @@ IncrementScore::
     ld [hl], a
 
     cp 10 ; Check if current digit is hasn't gone past zero
-    jp c, .loopEnd ; if so, return
+    jr c, .loopEnd ; if so, return
 
     inc c ; incrementing counter
     ld a, c
@@ -122,7 +122,7 @@ IncrementScore::
 .capAt999999
     ld a, [hl]
     cp 9
-    jp c, .loopEnd ; Checking if the final digit hasn't gone past 9
+    jr c, .loopEnd ; Checking if the final digit hasn't gone past 9
 
     ld a, 9
     ld [hl], a
@@ -151,7 +151,7 @@ IncrementScore::
     ld [hl], a
     ld [hld], a
     
-    jp .loop
+    jr .loop
 
 .loopEnd
     ; Reset score tick timer and return

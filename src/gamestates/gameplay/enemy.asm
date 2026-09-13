@@ -223,7 +223,7 @@ SetEnemySprite:
         ldh [wEnemyIndex], a
 
         cp a, b
-        jp c, .setSpriteLoop
+        jr c, .setSpriteLoop
     .setSpriteLoopEnd:
     
     xor a
@@ -309,7 +309,7 @@ EnemySpawner:
     ldh [wEnemyIndex], a
     
     cp a, b
-    jp c, .loop
+    jr c, .loop
 
     ret
 
@@ -352,7 +352,7 @@ MoveEnemies:
     add hl, de ; wEnemies[i].active
 
     ld a, [hl]
-    cp 0
+    or a
     jr nz, .skipIndexEnd ; Checking if wEnemies0[i].active is not zero
 
 .skipIndex:
@@ -379,7 +379,7 @@ MoveEnemies:
     ldh [wEnemyIndex], a
     
     cp a, b
-    jp c, .loop
+    jr c, .loop
 
     ret
 
@@ -427,7 +427,7 @@ MoveEnemies:
     ldh [wEnemyIndex], a
 
     cp a, b
-    jp c, .loop
+    jr c, .loop
 
     ret
 
@@ -470,7 +470,7 @@ MoveEnemies:
     ldh [wEnemyIndex], a
 
     cp a, b
-    jp c, .loop 
+    jr c, .loop 
 
     ret
 

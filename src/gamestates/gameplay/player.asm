@@ -195,7 +195,7 @@ CheckPlayerSpriteCollision:
     ld [wEnemyIndex], a
 
     cp a, b
-    jp c, .loop
+    jr c, .loop
 
     jr .collisionFoundEnd
 
@@ -230,7 +230,7 @@ CheckPlayerVsEnemyCollision:
     add a, X_OFFSET
     
     cp a, b
-    jp nc, .noCollisionAdjustDE
+    jr nc, .noCollisionAdjustDE
 
     ; CASE 2: player.x + width > enemy.x
     ld a, [de]
@@ -242,7 +242,7 @@ CheckPlayerVsEnemyCollision:
     add a, WIDTH
 
     cp a, b
-    jp c, .noCollisionAdjustDE
+    jr c, .noCollisionAdjustDE
 
     ; CASE 3: player.y < enemy.y + height
     dec de ; Decrementing to Enemy.y
@@ -254,7 +254,7 @@ CheckPlayerVsEnemyCollision:
     ld a, [wPlayer_y]
     
     cp a, b
-    jp nc, .noCollision
+    jr nc, .noCollision
  
     ; CASE 4: player.y + height > enemy.y
     ld a, [de]
@@ -266,10 +266,10 @@ CheckPlayerVsEnemyCollision:
     add a, HEIGHT
     
     cp a, b
-    jp c, .noCollision
+    jr c, .noCollision
 
     ; Collision Found
-    jp .noCollisionEnd
+    jr .noCollisionEnd
 
 .noCollisionAdjustDE 
     dec de

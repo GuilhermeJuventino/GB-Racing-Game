@@ -111,8 +111,8 @@ UpdateGameplay::
 .pauseGame
 
     ldh a, [wIsPaused]
-    cp 0
-    jp z, .pause
+    or a
+    jr z, .pause
 
     xor a
     ldh [wIsPaused], a
@@ -131,17 +131,17 @@ UpdateGameplay::
     jr z, UpdateGameplay
 
     ; if not inside VBlank, continue without printing the score.
-    ld a, [rLY]
-    cp 144
-    jr c, .printScoreEnd
+    ;ld a, [rLY]
+    ;cp 144
+    ;jr c, .printScoreEnd
 
-.printScore
+;.printScore
 
     ld hl, wScore
     ld de, $9C00 + 10
     call PrintScore
 
-.printScoreEnd
+;.printScoreEnd
 
     call ClearShadowOAM
 
@@ -176,8 +176,9 @@ UpdateGameplay::
 
     ldh a, [rDIV]
     ld [randstate], a
+    call hUGE_dosound
 
-    jp UpdateGameplay
+    jr UpdateGameplay
 
 
 AdjustDifficulty:
@@ -280,7 +281,6 @@ wShouldExitGameplayState:: db
 
 
 SECTION "Gameplay HRAM", HRAM
-
 
 ; Player Score
 wScore:: ds 6
