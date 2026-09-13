@@ -63,19 +63,19 @@ InitGameplay::
     ; Initializing state flag variables
     ld [wShouldExitGameplayState], a
     
-    ld [wScore], a
-    ld [wScore + 1], a
-    ld [wScore + 2], a
-    ld [wScore + 3], a
-    ld [wScore + 4], a
-    ld [wScore + 5], a
+    ldh [wScore], a
+    ldh [wScore + 1], a
+    ldh [wScore + 2], a
+    ldh [wScore + 3], a
+    ldh [wScore + 4], a
+    ldh [wScore + 5], a
 
     ld a, 8
-    ld [wScoreTick], a
-    ld [wScoreTickTime], a
+    ldh [wScoreTick], a
+    ldh [wScoreTickTime], a
 
     ld a, 3
-    ld [wScrollSpeed], a
+    ldh [wScrollSpeed], a
 
     xor a
     ld [randstate], a
@@ -83,9 +83,9 @@ InitGameplay::
     ld [randstate + 2], a
     ld [randstate + 3], a
 
-    ld [wIsPaused], a
+    ldh [wIsPaused], a
 
-    ld [wLevel], a
+    ldh [wLevel], a
 
     call InitPlayer
     call InitEnemies
@@ -110,23 +110,23 @@ UpdateGameplay::
 
 .pauseGame
 
-    ld a, [wIsPaused]
+    ldh a, [wIsPaused]
     cp 0
     jp z, .pause
 
     xor a
-    ld [wIsPaused], a
+    ldh [wIsPaused], a
     jr .pauseGameEnd
 
 .pause
 
     ld a, 1
-    ld [wIsPaused], a
+    ldh [wIsPaused], a
 
 .pauseGameEnd
     
     ; Check if game is paused. If so, go back to the start of the loop
-    ld a, [wIsPaused]
+    ldh a, [wIsPaused]
     cp 1
     jr z, UpdateGameplay
 
@@ -156,7 +156,7 @@ UpdateGameplay::
     .exitGameplayEnd:
     
     ; Scrolling the Background vertically
-    ld a, [wScrollSpeed]
+    ldh a, [wScrollSpeed]
     ld b, a
     ldh a, [hSCY]
     sub a, b
@@ -182,14 +182,14 @@ UpdateGameplay::
 
 AdjustDifficulty:
     ; 100 pts
-    ld a, [wScore + 3]
+    ldh a, [wScore + 3]
 
     cp 1
     jr nz, .level2End
 
 .level2
 
-    ld a, [wLevel]
+    ldh a, [wLevel]
     cp 2
     ret nc
 
@@ -197,21 +197,21 @@ AdjustDifficulty:
     ld [wMaxEnemiesToSpawn], a
 
     ld a, 2
-    ld [wLevel], a
+    ldh [wLevel], a
 
     ret
 
 .level2End
     
     ; 200 pts
-    ld a, [wScore + 3]
+    ldh a, [wScore + 3]
 
     cp 2
     jr nz, .level3End
 
 .level3
 
-    ld a, [wLevel]
+    ldh a, [wLevel]
     cp 3
     ret nc
 
@@ -219,21 +219,21 @@ AdjustDifficulty:
     ld [wMaxEnemiesToSpawn], a
 
     ld a, 3
-    ld [wLevel], a
+    ldh [wLevel], a
     
     ret
 
 .level3End
     
     ; 300 pts
-    ld a, [wScore + 3]
+    ldh a, [wScore + 3]
 
     cp 3
     jr nz, .level4End
 
 .level4
 
-    ld a, [wLevel]
+    ldh a, [wLevel]
     cp 4
     ret nc
 
@@ -241,20 +241,20 @@ AdjustDifficulty:
     ld [wMaxEnemiesToSpawn], a
 
     ld a, 4
-    ld [wLevel], a
+    ldh [wLevel], a
 
     ret
 
 .level4End
     ; 500 pts
-    ld a, [wScore + 3]
+    ldh a, [wScore + 3]
 
     cp 5
     jr nz, .level5End
 
 .level5
 
-    ld a, [wLevel]
+    ldh a, [wLevel]
     cp 5
     ret nc
 
@@ -262,7 +262,7 @@ AdjustDifficulty:
     ld [wMaxEnemiesToSpawn], a
 
     ld a, 5
-    ld [wLevel], a
+    ldh [wLevel], a
 
 .level5End
 
@@ -277,6 +277,10 @@ wRaceTrackMap:: db
 
 ; Variable to track whether or not the game should exit the gameplay state
 wShouldExitGameplayState:: db
+
+
+SECTION "Gameplay HRAM", HRAM
+
 
 ; Player Score
 wScore:: ds 6
